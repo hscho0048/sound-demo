@@ -1,0 +1,64 @@
+{
+  "deviceAgents": [
+    {
+      "agentId": "appliance-controller-pc-01",
+      "online": true,
+      "hostName": "soundcare-lab-pc",
+      "lastSeenAt": "2026-06-03T12:15:02+09:00",
+      "connectedModuleIds": ["esp32s3-appliance-01"],
+      "lastSerialPort": "COM5",
+      "targetDeviceId": "esp32s3-appliance-controller-device-uuid"
+    }
+  ],
+  "controlCommands": [
+    {
+      "commandId": "cmd-1001",
+      "targetDeviceId": "esp32s3-appliance-controller-device-uuid",
+      "targetModuleId": "esp32s3-appliance-01",
+      "agentId": "appliance-controller-pc-01",
+      "commandType": "PLAY_SAMPLE",
+      "payload": {
+        "applianceType": "robot_vacuum",
+        "sampleName": "robot_vacuum.wav",
+        "volumePercent": 70,
+        "mode": "single"
+      },
+      "status": "APPLIED",
+      "resultMessage": "ESP32-S3 모듈이 robot_vacuum.wav 재생을 시작했습니다.",
+      "createdAt": "2026-06-03T12:14:55+09:00",
+      "updatedAt": "2026-06-03T12:14:57+09:00"
+    },
+    {
+      "commandId": "cmd-1000",
+      "targetDeviceId": "esp32s3-appliance-controller-device-uuid",
+      "targetModuleId": "esp32s3-appliance-01",
+      "agentId": "appliance-controller-pc-01",
+      "commandType": "SET_VOLUME",
+      "payload": {
+        "volumePercent": 70
+      },
+      "status": "APPLIED",
+      "resultMessage": "볼륨이 70%로 설정되었습니다.",
+      "createdAt": "2026-06-03T12:14:40+09:00",
+      "updatedAt": "2026-06-03T12:14:41+09:00"
+    }
+  ],
+  "latestTelemetry": {
+    "moduleId": "esp32s3-appliance-01",
+    "agentId": "appliance-controller-pc-01",
+    "applianceType": "robot_vacuum",
+    "serviceLabel": "robot_vacuum",
+    "playbackState": "PLAYING",
+    "sampleName": "robot_vacuum.wav",
+    "volumePercent": 70,
+    "relativeDb": 61.8,
+    "decibelAvg": 60.4,
+    "decibelMax": 68.2,
+    "rms": 134.2,
+    "measuredBy": "INMP441",
+    "source": "CONTROLLER_AGENT_SERIAL",
+    "moduleTimestampMs": 52340,
+    "receivedAt": "2026-06-03T12:15:01+09:00",
+    "uploadedAt": "2026-06-03T12:15:01+09:00"
+  }
+}

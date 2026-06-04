@@ -1,0 +1,14 @@
+{
+  "modelLabels": [
+    "vacuum_cleaner",
+    "washing_machine",
+    "dishwasher",
+    "background"
+  ],
+  "serviceLabelMapping": {
+    "vacuum_cleaner": "robot_vacuum",
+    "washing_machine": "washing_machine",
+    "dishwasher": "dishwasher",
+    "background": "background"
+  }
+}

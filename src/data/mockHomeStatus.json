@@ -1,0 +1,159 @@
+{
+  "homeId": "home-demo-001",
+  "currentNoiseState": "SENSITIVE_APPLIANCE_DETECTED",
+  "currentServiceLabel": "robot_vacuum",
+  "currentModelLabel": "vacuum_cleaner",
+  "confidence": 0.91,
+  "decibelAvg": 63.4,
+  "decibelMax": 71.2,
+  "temperature": 24.6,
+  "humidity": 47.5,
+  "roomId": "room-living",
+  "roomName": "거실",
+  "createdAt": "2026-06-03T12:15:00+09:00",
+  "latestNotification": {
+    "id": "noti-001",
+    "type": "ROBOT_ROUTE_CHANGED",
+    "title": "로봇청소기 경로가 변경되었습니다",
+    "message": "거실에서 민감 소음이 감지되어 회피 경로를 3D 화면에 반영했습니다.",
+    "read": false
+  },
+  "devices": [
+    {
+      "id": "dev-hub-01",
+      "name": "거실 IoT Hub 스마트폰",
+      "type": "IOT_HUB_PHONE",
+      "roomName": "거실",
+      "connected": true,
+      "lastSeenAt": "방금 전"
+    },
+    {
+      "id": "dev-user-01",
+      "name": "사용자 스마트폰",
+      "type": "USER_DEVICE_PHONE",
+      "roomName": "침실",
+      "connected": true,
+      "lastSeenAt": "1분 전"
+    },
+    {
+      "id": "dev-meter-01",
+      "name": "세탁실 소음 미터",
+      "type": "APPLIANCE_NOISE_METER",
+      "roomName": "세탁실",
+      "connected": false,
+      "lastSeenAt": "12분 전"
+    },
+    {
+      "id": "dev-module-01",
+      "name": "세탁기 가전 소리 모듈",
+      "type": "APPLIANCE_SOUND_MODULE",
+      "roomName": "세탁실",
+      "connected": true,
+      "lastSeenAt": "3분 전"
+    }
+  ],
+  "sensitiveAppliances": [
+    {
+      "serviceLabel": "robot_vacuum",
+      "displayName": "로봇청소기",
+      "enabled": true,
+      "baseDbThreshold": 55,
+      "responseDbThreshold": 60,
+      "confidenceThreshold": 0.75,
+      "automaticResponseMode": "AUTO_APPLY_SIMULATION",
+      "notificationMode": "IMMEDIATE",
+      "includeInReport": true
+    },
+    {
+      "serviceLabel": "washing_machine",
+      "displayName": "세탁기",
+      "enabled": true,
+      "baseDbThreshold": 58,
+      "responseDbThreshold": 65,
+      "confidenceThreshold": 0.7,
+      "automaticResponseMode": "CONFIRM_BEFORE_APPLY",
+      "notificationMode": "IMMEDIATE",
+      "includeInReport": true
+    },
+    {
+      "serviceLabel": "dishwasher",
+      "displayName": "식기세척기",
+      "enabled": false,
+      "baseDbThreshold": 60,
+      "responseDbThreshold": 68,
+      "confidenceThreshold": 0.72,
+      "automaticResponseMode": "ROUTINE_SUGGESTION",
+      "notificationMode": "SUMMARY",
+      "includeInReport": false
+    },
+    {
+      "serviceLabel": "refrigerator",
+      "displayName": "냉장고",
+      "enabled": true,
+      "baseDbThreshold": 50,
+      "responseDbThreshold": 56,
+      "confidenceThreshold": 0.65,
+      "automaticResponseMode": "WARNING_ONLY",
+      "notificationMode": "IMMEDIATE",
+      "includeInReport": true
+    }
+  ],
+  "notifications": [
+    {
+      "id": "noti-001",
+      "type": "ROBOT_ROUTE_CHANGED",
+      "title": "로봇청소기 경로 변경",
+      "message": "거실 회피 구역이 적용되었습니다.",
+      "read": false,
+      "createdAt": "2026-06-03T12:15:00+09:00"
+    },
+    {
+      "id": "noti-002",
+      "type": "SENSITIVE_APPLIANCE_DETECTED",
+      "title": "민감 가전 소음 감지",
+      "message": "로봇청소기 소음이 기준치를 넘었습니다.",
+      "read": false,
+      "createdAt": "2026-06-03T12:14:50+09:00"
+    },
+    {
+      "id": "noti-003",
+      "type": "NON_CONTROLLABLE_WARNING",
+      "title": "냉장고 주의 알림",
+      "message": "반복 소음이 감지되면 보호자에게 공유할 수 있습니다.",
+      "read": true,
+      "createdAt": "2026-06-02T21:10:00+09:00"
+    }
+  ],
+  "routineRecommendations": [
+    {
+      "id": "routine-001",
+      "title": "저녁 시간 세탁기 사용 줄이기",
+      "reason": "20시 이후 부정 반응이 반복되었습니다.",
+      "status": "SUGGESTED",
+      "targetServiceLabel": "washing_machine"
+    },
+    {
+      "id": "routine-002",
+      "title": "거실 민감 시간대 로봇청소기 회피",
+      "reason": "거실에서 로봇청소기 소음 감지가 반복되었습니다.",
+      "status": "AUTO_APPLIED",
+      "targetServiceLabel": "robot_vacuum"
+    }
+  ],
+  "basicReport": {
+    "period": "최근 7일",
+    "summary": "로봇청소기와 세탁기 소음이 주요 민감 반응 원인으로 나타났습니다.",
+    "eventCount": 42,
+    "negativeReactionCount": 9,
+    "topServiceLabel": "robot_vacuum"
+  },
+  "robotAvoidanceEvent": {
+    "id": "avoid-001",
+    "serviceLabel": "robot_vacuum",
+    "roomId": "room-living",
+    "roomName": "거실",
+    "confidence": 0.91,
+    "decibelMax": 71.2,
+    "routeMode": "AVOID_ACTIVE_ROOM"
+  }
+}
