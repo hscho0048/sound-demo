@@ -2,7 +2,7 @@ const env = import.meta.env ?? {};
 
 export const API_BASE_URL = env.VITE_SOUNDCARE_API_BASE_URL || 'http://localhost:8080';
 export const USE_MOCK_API = String(env.VITE_USE_MOCK_API ?? 'true').toLowerCase() === 'true';
-export const USE_API_FALLBACK = String(env.VITE_USE_API_FALLBACK ?? 'true').toLowerCase() === 'true';
+export const USE_API_FALLBACK = String(env.VITE_USE_API_FALLBACK ?? 'false').toLowerCase() === 'true';
 export const TOKEN_STORAGE_KEY = 'soundcare.accessToken';
 export const DEV_AUTH_PROFILE = {
   idToken: env.VITE_DEV_AUTH_ID_TOKEN || 'soundcare-tauri-local-dev',
@@ -12,13 +12,16 @@ export const DEV_AUTH_PROFILE = {
 
 export const tokenStorage = {
   get() {
+    if (typeof window === 'undefined') return null;
     return window.localStorage.getItem(TOKEN_STORAGE_KEY);
   },
   set(token) {
     // TODO: 운영 환경에서는 Tauri secure storage plugin 또는 OS keychain을 사용한다.
+    if (typeof window === 'undefined') return;
     window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
   },
   clear() {
+    if (typeof window === 'undefined') return;
     window.localStorage.removeItem(TOKEN_STORAGE_KEY);
   }
 };

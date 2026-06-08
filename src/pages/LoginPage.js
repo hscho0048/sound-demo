@@ -1,3 +1,5 @@
+import { loginWithLocalDev } from '../api/authApi.js';
+
 export function renderLoginPage() {
   return `
     <section class="login-page">
@@ -8,6 +10,7 @@ export function renderLoginPage() {
             <h1>SoundCare ThinQ Clone</h1>
             <p>Sign in to review the main dashboard, 3D home, devices, and reports.</p>
             <button id="local-login-button" class="primary-button">Login</button>
+            <p id="login-status" aria-live="polite"></p>
             <p class="login-create-account">Need an account? <a href="#/create-account">Create account</a></p>
           </div>
         </div>
@@ -22,8 +25,19 @@ export function renderLoginPage() {
 export function mountLoginPage({ navigate }) {
   document.querySelector('#local-login-button')?.addEventListener('click', async () => {
     const button = document.querySelector('#local-login-button');
+    const status = document.querySelector('#login-status');
     button.disabled = true;
     button.textContent = 'Logging in...';
-    navigate('#/home');
+    if (status) status.textContent = 'Requesting backend token...';
+
+    try {
+      await loginWithLocalDev();
+      if (status) status.textContent = 'Login complete.';
+      navigate('#/home');
+    } catch (error) {
+      if (status) status.textContent = `Login failed: ${error.message}`;
+      button.disabled = false;
+      button.textContent = 'Login';
+    }
   });
 }

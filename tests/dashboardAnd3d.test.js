@@ -9,14 +9,11 @@ afterEach(() => {
 });
 
 describe('dashboard API fallback defaults', () => {
-  it('returns hardcoded home status when the API is unavailable', async () => {
+  it('surfaces backend failures when API fallback is disabled', async () => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))));
 
-    const status = await getCurrentHomeStatus();
-
-    expect(status.homeId).toBe('home-demo-001');
-    expect(status.currentServiceLabel).toBe('robot_vacuum');
+    await expect(getCurrentHomeStatus()).rejects.toThrow('offline');
   });
 });
 
