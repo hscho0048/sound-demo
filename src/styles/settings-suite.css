@@ -1,0 +1,281 @@
+/* Shared frame for Settings, Profile, and System Status. */
+.app-workspace:has(.settings-page),
+.app-workspace:has(.profile-page),
+.app-workspace:has(.system-status-page) {
+  --settings-suite-sidebar: var(--ui-sidebar-width, 210px);
+  --settings-suite-tabs: 206px;
+  --settings-suite-gap: 20px;
+  --settings-suite-width: 1196px;
+  --settings-suite-pad-x: 34px;
+  --settings-suite-pad-y: 34px;
+  --settings-suite-card-pad: 22px;
+  grid-template-columns: var(--settings-suite-sidebar) minmax(0, 1fr);
+}
+
+.app-workspace:has(.settings-page) .sidebar,
+.app-workspace:has(.profile-page) .sidebar,
+.app-workspace:has(.system-status-page) .sidebar {
+  min-width: 0;
+  overflow: hidden;
+  padding-inline: clamp(16px, 1.5vw, 24px);
+}
+
+.app-workspace:has(.settings-page) .sidebar nav a,
+.app-workspace:has(.profile-page) .sidebar nav a,
+.app-workspace:has(.system-status-page) .sidebar nav a {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: clamp(15px, 1vw, 18px);
+}
+
+.settings-page,
+.profile-page,
+.system-status-page {
+  padding: var(--settings-suite-pad-y) 0 48px var(--settings-suite-pad-x);
+  background: #f3f4f6;
+}
+
+.settings-page-header,
+.profile-page-header,
+.system-page-header {
+  display: flex;
+  align-items: baseline;
+  width: 100%;
+  max-width: var(--settings-suite-width);
+  min-height: 44px;
+  margin: 0 0 28px;
+  gap: 42px;
+}
+
+.settings-page-header h1,
+.profile-page-header h1,
+.system-page-header h1 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1;
+}
+
+.settings-page-header p,
+.profile-page-header p,
+.system-page-header p {
+  margin: 0;
+  color: #4b5563;
+  font-size: 17px;
+  line-height: 1.35;
+}
+
+.settings-layout,
+.profile-layout,
+.system-status-shell {
+  width: 100%;
+  max-width: var(--settings-suite-width);
+  margin: 0;
+  gap: var(--settings-suite-gap);
+  align-items: start;
+}
+
+.settings-layout {
+  grid-template-columns: var(--settings-suite-tabs) repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "tabs noise sensitivity"
+    "tabs avoidance consent"
+    "tabs data save";
+}
+
+.profile-layout {
+  grid-template-columns: var(--settings-suite-tabs) minmax(0, 1fr) 360px;
+  grid-template-areas:
+    "tabs identity account"
+    "tabs security actions"
+    "tabs notice notice";
+}
+
+.system-status-shell {
+  grid-template-columns: var(--settings-suite-tabs) minmax(0, 1fr);
+  grid-template-areas: "tabs status";
+}
+
+.settings-category-panel,
+.profile-category-panel,
+.system-category-panel {
+  width: auto;
+  min-height: 542px;
+  padding: 20px;
+  gap: 20px;
+  align-self: start;
+  border-radius: 10px;
+}
+
+.settings-tab,
+.profile-category-panel .settings-tab,
+.system-category-panel .settings-tab {
+  width: 100%;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 18px;
+  font-size: 16px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.settings-card,
+.profile-card,
+.system-card,
+.system-guide-card,
+.system-error-log,
+.system-overall-banner {
+  border-radius: 10px;
+  padding: var(--settings-suite-card-pad);
+}
+
+.settings-card,
+.profile-identity-card,
+.profile-account-card {
+  min-height: 158px;
+}
+
+.profile-security-card,
+.profile-actions-card {
+  min-height: 122px;
+}
+
+.profile-notice-card {
+  min-height: 64px;
+}
+
+.profile-identity-card {
+  grid-template-columns: 118px minmax(0, 1fr);
+  gap: 28px;
+}
+
+.profile-photo-placeholder {
+  width: 112px;
+  height: 112px;
+}
+
+.system-status-layout {
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "overall overall overall"
+    "spring flutter guide"
+    "model sensor guide"
+    "log log log";
+  gap: var(--settings-suite-gap);
+}
+
+.system-overall-banner {
+  height: auto;
+  min-height: 78px;
+  padding: 18px 24px;
+}
+
+.system-card {
+  height: auto;
+  min-height: 122px;
+}
+
+.system-guide-card {
+  height: auto;
+  min-height: 264px;
+}
+
+.system-error-log {
+  height: auto;
+  min-height: 128px;
+  overflow-x: auto;
+}
+
+.system-card h2,
+.system-guide-card h2,
+.system-error-log h2,
+.profile-card h2,
+.settings-card h2 {
+  font-size: 17px;
+  line-height: 1.15;
+}
+
+@media (max-width: 1180px) {
+  .settings-layout,
+  .profile-layout,
+  .system-status-shell {
+    grid-template-columns: var(--settings-suite-tabs) minmax(0, 1fr);
+  }
+
+  .settings-layout {
+    grid-template-areas:
+      "tabs noise"
+      "tabs sensitivity"
+      "tabs avoidance"
+      "tabs consent"
+      "tabs data"
+      "tabs save";
+  }
+
+  .profile-layout {
+    grid-template-areas:
+      "tabs identity"
+      "tabs account"
+      "tabs security"
+      "tabs actions"
+      "tabs notice";
+  }
+
+  .system-status-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "overall overall"
+      "spring flutter"
+      "model sensor"
+      "guide guide"
+      "log log";
+  }
+}
+
+@media (max-width: 760px) {
+  .settings-page,
+  .profile-page,
+  .system-status-page {
+    padding: 22px 18px;
+  }
+
+  .settings-page-header,
+  .profile-page-header,
+  .system-page-header {
+    display: grid;
+    width: 100%;
+    height: auto;
+    gap: 8px;
+  }
+
+  .settings-layout,
+  .profile-layout,
+  .system-status-shell {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .settings-category-panel,
+  .profile-category-panel,
+  .system-category-panel {
+    min-height: auto;
+    height: auto;
+  }
+
+  .profile-identity-card {
+    grid-template-columns: 1fr;
+  }
+
+  .system-status-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "overall"
+      "spring"
+      "flutter"
+      "model"
+      "sensor"
+      "guide"
+      "log";
+  }
+}

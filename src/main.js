@@ -1,60 +1,147 @@
 import './styles/main.css';
-import { getRecentNotifications } from './api/notificationApi.js';
+import './styles/settings-suite.css';
+import './styles/three-home-fixes.css';
+import './styles/accessibility.css';
 import { renderLoginPage, mountLoginPage } from './pages/LoginPage.js';
 import { renderCreateAccountPage, mountCreateAccountPage } from './pages/CreateAccount.js';
-import { renderHomeDashboardPage, mountHomeDashboardPage } from './pages/HomeDashboardPage.js';
+import {
+  cleanupHomeDashboardPage,
+  renderHomeDashboardPage,
+  mountHomeDashboardPage
+} from './pages/HomeDashboardPage.js';
 import { renderSensitiveApplianceSettingsPage, mountSensitiveApplianceSettingsPage } from './pages/SensitiveApplianceSettingsPage.js';
 import { cleanupThreeDHomePage, mountThreeDHomePage, renderThreeDHomePage } from './pages/ThreeDHomePage.js';
-import { mountReportPage, renderReportPage } from './pages/ReportPage.js';
+import { renderDeviceListPage } from './pages/DeviceListPage.js';
+import { cleanupDeviceDetailPage, mountDeviceDetailPage, renderDeviceDetailPage } from './pages/DeviceDetailPage.js';
+import { cleanupReportPage, mountReportPage, renderReportPage } from './pages/ReportPage.js';
+import { mountReactionHistoryPage, renderReactionHistoryPage } from './pages/ReactionHistoryPage.js';
+import { renderGPTDetailedReportPage } from './pages/GPTDetailedReportPage.js';
+import { mountSystemStatusPage, renderSystemStatusPage } from './pages/SystemStatusPage.js';
 import { mountSettingsPage, renderSettingsPage } from './pages/SettingsPage.js';
+import { mountProfilePage, renderProfilePage } from './pages/ProfilePage.js';
 import { escapeHtml } from './utils/html.js';
 
 const app = document.querySelector('#root');
-const env = import.meta.env ?? {};
-const pollIntervalMs = Number(env.VITE_NOTIFICATION_POLL_INTERVAL_MS ?? 15000);
 let currentCleanup = null;
-let notificationTimer = null;
 
 const routes = [
-  { pattern: /^#\/login$/, title: '로그인', render: renderLoginPage, mount: mountLoginPage },
-  { pattern: /^#\/create-account$/, title: '계정 만들기', render: renderCreateAccountPage, mount: mountCreateAccountPage },
-  { pattern: /^#\/home$/, title: '홈', render: renderHomeDashboardPage, mount: mountHomeDashboardPage },
-  { pattern: /^#\/sensitive-appliances$/, title: '민감 가전', render: renderSensitiveApplianceSettingsPage, mount: mountSensitiveApplianceSettingsPage },
-  { pattern: /^#\/three-home$/, title: '3D 홈', render: renderThreeDHomePage, mount: mountThreeDHomePage, cleanup: cleanupThreeDHomePage },
-  { pattern: /^#\/reports$/, title: '리포트', render: renderReportPage, mount: mountReportPage },
-  { pattern: /^#\/settings$/, title: '설정', render: renderSettingsPage, mount: mountSettingsPage }
+  { pattern: /^#\/login$/, title: 'Login', render: renderLoginPage, mount: mountLoginPage },
+  { pattern: /^#\/create-account$/, title: 'Create Account', render: renderCreateAccountPage, mount: mountCreateAccountPage },
+  {
+    pattern: /^#\/home$/,
+    title: 'Home',
+    render: renderHomeDashboardPage,
+    mount: mountHomeDashboardPage,
+    cleanup: cleanupHomeDashboardPage
+  },
+  {
+    pattern: /^#\/three-home$/,
+    title: '3D Home',
+    render: renderThreeDHomePage,
+    mount: mountThreeDHomePage,
+    cleanup: cleanupThreeDHomePage
+  },
+  { pattern: /^#\/devices$/, title: 'Devices', render: renderDeviceListPage },
+  {
+    pattern: /^#\/devices\/(?<deviceId>[^/]+)$/,
+    title: 'Device Detail',
+    render: renderDeviceDetailPage,
+    mount: mountDeviceDetailPage,
+    cleanup: cleanupDeviceDetailPage
+  },
+  {
+    pattern: /^#\/sensitive-appliances$/,
+    title: 'Sensitive Appliances',
+    render: renderSensitiveApplianceSettingsPage,
+    mount: mountSensitiveApplianceSettingsPage
+  },
+  {
+    pattern: /^#\/reports$/,
+    title: 'Report',
+    render: renderReportPage,
+    mount: mountReportPage,
+    cleanup: cleanupReportPage
+  },
+  {
+    pattern: /^#\/reports\/reaction-history$/,
+    title: 'Reaction History',
+    render: renderReactionHistoryPage,
+    mount: mountReactionHistoryPage
+  },
+  {
+    pattern: /^#\/reports\/gpt-detailed$/,
+    title: 'GPT Detailed Report',
+    render: renderGPTDetailedReportPage
+  },
+  {
+    pattern: /^#\/reports\/system-status$/,
+    title: 'System Status',
+    render: renderSystemStatusPage,
+    mount: mountSystemStatusPage
+  },
+  { pattern: /^#\/settings$/, title: 'Settings', render: renderSettingsPage, mount: mountSettingsPage },
+  { pattern: /^#\/profile$/, title: 'Profile', render: renderProfilePage, mount: mountProfilePage }
 ];
 
 const navItems = [
-  ['#/home', '홈'],
-  ['#/sensitive-appliances', '민감 가전'],
-  ['#/three-home', '3D 홈'],
-  ['#/reports', '리포트'],
-  ['#/settings', '설정']
+  { href: '#/home', label: 'Home', icon: 'home' },
+  { href: '#/three-home', label: '3D Home', icon: 'box' },
+  { href: '#/devices', label: 'Devices', icon: 'box' },
+  { href: '#/reports', label: 'Report', icon: 'box' }
 ];
 
 function navigate(hash) {
   window.location.hash = hash;
 }
 
+function isNavActive(currentHash, href) {
+  return currentHash === href || currentHash.startsWith(`${href}/`);
+}
+
+function navIcon(icon) {
+  return `<span class="nav-symbol nav-symbol--${escapeHtml(icon)}" aria-hidden="true"></span>`;
+}
+
 function shell(content, routeTitle) {
   const currentHash = window.location.hash || '#/login';
-  const nav = navItems.map(([href, label]) => {
-    const active = currentHash === href;
-    return `<a class="${active ? 'is-active' : ''}" href="${href}">${label}</a>`;
-  }).join('');
   const hideNav = currentHash === '#/login' || currentHash === '#/create-account';
+  const settingsActive = currentHash === '#/settings' || currentHash === '#/profile' || currentHash === '#/reports/system-status';
+
+  if (hideNav) {
+    return `
+      <div class="app-shell app-shell--login">
+        <main class="main-content">${content}</main>
+      </div>
+    `;
+  }
+
+  const nav = navItems
+    .map(({ href, label, icon }) => {
+      const active = isNavActive(currentHash, href);
+      return `
+        <a class="sidebar-nav-item ${active ? 'is-active' : ''}" href="${href}">
+          ${navIcon(icon)}
+          <span>${escapeHtml(label)}</span>
+        </a>
+      `;
+    })
+    .join('');
+
   return `
-    <div class="app-shell ${hideNav ? 'app-shell--login' : ''}">
-      ${hideNav ? '' : `
+    <div class="app-shell app-shell--desktop">
+      <div class="app-workspace">
         <aside class="sidebar">
-          <div class="brand"><span>SC</span><strong>SoundCare</strong></div>
+          <h1>ThinQ Clone</h1>
           <nav>${nav}</nav>
-          <p class="sidebar-note">Tauri/Web 제어 화면 · ${escapeHtml(routeTitle)}</p>
+          <div class="sidebar-footer">
+            <a class="sidebar-footer-link ${settingsActive ? 'is-active' : ''}" href="#/settings" aria-label="Settings">
+              <img class="settings-symbol" src="/assets/icons/setting.svg" alt="" aria-hidden="true" />
+            </a>
+          </div>
         </aside>
-      `}
-      <main class="main-content">${content}</main>
-      <div id="toast-root" class="toast-root" aria-live="polite"></div>
+
+        <main class="main-content">${content}</main>
+      </div>
     </div>
   `;
 }
@@ -74,35 +161,24 @@ async function renderRoute() {
   const { route, params } = matchRoute(hash);
   currentCleanup?.();
   currentCleanup = route.cleanup ?? null;
-  app.innerHTML = shell('<section class="page"><p>화면을 불러오는 중...</p></section>', route.title);
+  app.innerHTML = shell('<section class="page"><p>Loading...</p></section>', route.title);
+
   try {
     const content = await route.render({ params, navigate });
     app.innerHTML = shell(content, route.title);
     route.mount?.({ params, navigate });
   } catch (error) {
-    app.innerHTML = shell(`
-      <section class="page">
-        <div class="warning-box">
-          <h1>화면 로딩 실패</h1>
-          <p>${escapeHtml(error.message)}</p>
-        </div>
-      </section>
-    `, route.title);
-  }
-}
-
-async function pollNotifications() {
-  if ((window.location.hash || '#/login') === '#/login') return;
-  try {
-    const notifications = await getRecentNotifications(1);
-    const latest = notifications?.[0];
-    const toastRoot = document.querySelector('#toast-root');
-    if (latest && toastRoot) {
-      toastRoot.innerHTML = `<div class="toast"><strong>${escapeHtml(latest.title)}</strong><span>${escapeHtml(latest.message)}</span></div>`;
-      window.setTimeout(() => { toastRoot.innerHTML = ''; }, 5000);
-    }
-  } catch {
-    // 알림 폴링 실패는 화면 사용을 막지 않는다.
+    app.innerHTML = shell(
+      `
+        <section class="page">
+          <div class="warning-box">
+            <h1>Unable to load this screen</h1>
+            <p>${escapeHtml(error.message)}</p>
+          </div>
+        </section>
+      `,
+      route.title
+    );
   }
 }
 
@@ -113,8 +189,6 @@ if (!window.location.hash) {
 }
 
 renderRoute();
-notificationTimer = window.setInterval(pollNotifications, pollIntervalMs);
 window.addEventListener('beforeunload', () => {
   currentCleanup?.();
-  if (notificationTimer) window.clearInterval(notificationTimer);
 });

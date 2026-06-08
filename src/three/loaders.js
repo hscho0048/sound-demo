@@ -1,5 +1,39 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+export function assetUrl(path) {
+  const base = import.meta.env.BASE_URL ?? '/';
+  const normalizedBase = base.endsWith('/') ? base : `${base}/`;
+  return `${normalizedBase}${path}`;
+}
+
+export function createDracoGltfLoader() {
+  const loader = new GLTFLoader();
+  const dracoLoader = new DRACOLoader();
+  dracoLoader.setDecoderPath(assetUrl('assets/draco/'));
+  dracoLoader.setDecoderConfig({ type: 'wasm' });
+  dracoLoader.preload();
+  loader.setDRACOLoader(dracoLoader);
+  return { loader, dracoLoader };
+}
+
+export function disposeObject(root) {
+  root.traverse((object) => {
+    if (object.geometry) object.geometry.dispose?.();
+    if (object.material) {
+      const materials = Array.isArray(object.material) ? object.material : [object.material];
+      materials.forEach(disposeMaterial);
+    }
+  });
+}
+
+export function disposeMaterial(material) {
+  Object.values(material).forEach((value) => {
+    if (value?.isTexture) value.dispose?.();
+  });
+  material.dispose?.();
+}
 
 export async function loadGlbWithFallback(scene, url, fallbackFactory, { position = [0, 0, 0], scale = [1, 1, 1] } = {}) {
   const loader = new GLTFLoader();

@@ -1,0 +1,144 @@
+/* Final 3D Home fit pass. Keeps the canvas wide without clipping the page or dB labels. */
+.three-view-page {
+  padding: 0;
+  overflow: hidden;
+}
+
+.three-view-household-header {
+  min-height: 66px;
+  padding: 0 var(--ui-page-pad-x);
+}
+
+.three-view-content {
+  --three-home-pad-top: clamp(22px, 2vw, 34px);
+  --three-home-pad-bottom: clamp(18px, 2vw, 28px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 15vw, 330px);
+  gap: clamp(18px, 1.6vw, 24px);
+  height: calc(100dvh - 66px);
+  min-height: 0;
+  padding: var(--three-home-pad-top) var(--ui-page-pad-x) var(--three-home-pad-bottom);
+  align-items: start;
+  overflow: hidden;
+}
+
+.three-view-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  height: calc(100dvh - 66px - var(--three-home-pad-top) - var(--three-home-pad-bottom));
+  max-height: calc(100dvh - 66px - var(--three-home-pad-top) - var(--three-home-pad-bottom));
+  padding: clamp(22px, 2vw, 32px) clamp(18px, 2vw, 28px) clamp(14px, 1.4vw, 22px);
+  overflow: hidden;
+  border: 2px solid var(--ui-border);
+  border-radius: var(--ui-card-radius);
+  background: #ffffff;
+}
+
+.three-view-stage h2 {
+  margin: 0;
+  font-size: clamp(48px, 4vw, 66px);
+  line-height: 0.98;
+}
+
+.three-view-container {
+  min-height: 0;
+  height: auto;
+  margin: clamp(8px, 1vw, 14px) 0 0;
+  overflow: hidden;
+  border: 2px solid var(--ui-border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.three-view-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.appliance-noise-panel {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(128px, 1fr));
+  gap: clamp(14px, 1.4vw, 20px);
+  width: 100%;
+  max-width: 100%;
+  padding-top: 0;
+}
+
+.appliance-noise-card {
+  min-width: 0;
+  min-height: 128px;
+  padding: clamp(16px, 1.5vw, 22px);
+  overflow: hidden;
+}
+
+.appliance-noise-card h2 {
+  margin-bottom: clamp(8px, 1vw, 12px);
+  font-size: clamp(22px, 1.8vw, 28px);
+  line-height: 1.08;
+}
+
+.appliance-noise-card__body {
+  grid-template-columns: clamp(70px, 5vw, 84px) minmax(0, 1fr);
+  gap: clamp(12px, 1vw, 16px);
+}
+
+.appliance-picture-slot {
+  width: 100%;
+  height: clamp(54px, 4.2vw, 66px);
+}
+
+.appliance-noise-card strong {
+  min-width: 0;
+  font-size: clamp(38px, 2.6vw, 50px);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@media (max-width: 1180px) {
+  .three-view-page {
+    overflow: visible;
+  }
+
+  .three-view-content {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .three-view-stage {
+    height: min(68vh, 640px);
+    max-height: none;
+  }
+
+  .appliance-noise-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+
+  .appliance-noise-card__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .three-view-content {
+    padding: 18px;
+  }
+
+  .three-view-stage {
+    height: 520px;
+  }
+
+  .appliance-noise-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .appliance-noise-card__body {
+    grid-template-columns: clamp(70px, 22vw, 88px) minmax(0, 1fr);
+  }
+}

@@ -30,17 +30,17 @@ export function renderCreateAccountPage() {
     <section class="account-page">
       <div class="account-window">
         <header class="account-header">
-          <a class="account-back-button" href="#/login" aria-label="Back to sign in"><img src="/src/styles/나가기.png" alt="" /></a>
+          <a class="account-back-button" href="#/login" aria-label="Back to sign in"><span aria-hidden="true">&larr;</span></a>
           <div>
-            <h1>계정 생성하기</h1>
-            <a href="#/login">로그인 페이지로 돌아가기</a>
+            <h1>Create Account</h1>
+            <a href="#/login">Back to login</a>
           </div>
         </header>
         <main class="account-content">
           <form class="account-card" id="create-account-form">
-            <h2>계정 생성</h2>
+            <h2>Account setup</h2>
             <div class="account-info-box">
-              <strong>작성해야 하는 정보</strong>
+              <strong>Required information</strong>
               <span>Household, nickname, consent</span>
             </div>
 
@@ -52,7 +52,7 @@ export function renderCreateAccountPage() {
             <label>
               <span>Nick *</span>
               <div class="account-inline">
-                <input name="nick" type="text" placeholder="사용하실 닉네임을 작성해주세요 ex. 챱츄챱챱츄" required />
+                <input name="nick" type="text" placeholder="Enter a nickname" required />
                 <button id="check-nickname-button" type="button">Check duplicate</button>
               </div>
             </label>
@@ -68,38 +68,38 @@ export function renderCreateAccountPage() {
               <span>I agree to privacy policy and service terms.</span>
             </label>
 
-            <p class="account-required">* 필수입니다</p>
+            <p class="account-required">* Required</p>
             <button class="account-submit" type="submit">Create account</button>
-            <p class="account-signin-note">이미 생성되어 있는 계정입니다.</p>
+            <p class="account-signin-note">Already have an account?</p>
           </form>
 
-          <p class="account-validation">Validation and missing consent messages appear here.</p>
+          <p class="account-validation" aria-live="polite">Validation and missing consent messages appear here.</p>
         </main>
       </div>
     </section>
   `;
 }
 
-export function mountCreateAccountPage() {
+export function mountCreateAccountPage({ navigate }) {
   document.querySelector('#check-nickname-button')?.addEventListener('click', async () => {
     const button = document.querySelector('#check-nickname-button');
     const nickname = document.querySelector('input[name="nick"]')?.value.trim();
     if (!nickname) {
-      setNicknameAvailability('닉네임을 입력해주세요.', 'is-duplicate');
+      setNicknameAvailability('Enter a nickname first.', 'is-duplicate');
       return;
     }
 
     button.disabled = true;
-    setNicknameAvailability('닉네임 중복 확인 중입니다.', 'is-checking');
+    setNicknameAvailability('Checking nickname...', 'is-checking');
     try {
       const isDuplicate = await checkNicknameDuplicate(nickname);
       if (isDuplicate) {
-        setNicknameAvailability('해당 닉네임이 중복되었습니다. 다른 닉네임을 선택해주세요.', 'is-duplicate');
+        setNicknameAvailability('This nickname is already taken. Choose another one.', 'is-duplicate');
       } else {
-        setNicknameAvailability('해당 닉네임은 가능합니다', 'is-available');
+        setNicknameAvailability('This nickname is available.', 'is-available');
       }
     } catch (error) {
-      setNicknameAvailability(`닉네임 중복 확인에 실패했습니다: ${error.message}`, 'is-duplicate');
+      setNicknameAvailability(`Nickname check failed: ${error.message}`, 'is-duplicate');
     } finally {
       button.disabled = false;
     }
@@ -107,5 +107,8 @@ export function mountCreateAccountPage() {
 
   document.querySelector('#create-account-form')?.addEventListener('submit', (event) => {
     event.preventDefault();
+    const validation = document.querySelector('.account-validation');
+    if (validation) validation.textContent = 'Account created locally. Redirecting to Home...';
+    window.setTimeout(() => navigate('#/home'), 250);
   });
 }
