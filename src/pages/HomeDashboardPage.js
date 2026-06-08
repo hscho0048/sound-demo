@@ -4,6 +4,7 @@ import { createDashboardHomeScene } from '../three/dashboardHomeScene.js';
 import { escapeHtml } from '../utils/html.js';
 
 let dashboardSceneController = null;
+let dashboardSceneMediaCleanup = null;
 
 function formatMetric(value, fallback) {
   const number = Number(value);
@@ -35,7 +36,12 @@ export async function renderHomeDashboardPage() {
   return `
     <section class="page thinq-dashboard-page" aria-label="Main dashboard">
       <header class="dashboard-household-header">
-        <h1>Household: Cho Home</h1>
+        <h1 class="dashboard-desktop-title">Household: Cho Home</h1>
+        <div class="dashboard-mobile-title">
+          <h1>ThinQ Clone</h1>
+          <p>Seocho Home · Live dashboard</p>
+        </div>
+        <p class="dashboard-mobile-sync">Last sync: ${escapeHtml(syncTime)}</p>
       </header>
 
       <div class="dashboard-main-grid">
@@ -46,7 +52,7 @@ export async function renderHomeDashboardPage() {
         </button>
 
         <aside class="dashboard-summary-column" aria-label="Home summary">
-          <section class="dashboard-info-card">
+          <section class="dashboard-info-card dashboard-climate-card">
             <h2>Room climate</h2>
             <strong>${temperature} &deg;C</strong>
             <strong>${humidity}%</strong>
@@ -66,6 +72,25 @@ export async function renderHomeDashboardPage() {
             <p>Open daily noise summary and reaction overview.</p>
             <a class="dashboard-report-button" href="#/reports">View report</a>
           </section>
+
+          <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--positive" type="button">
+            <strong aria-hidden="true">+</strong>
+            <h2>Positive</h2>
+            <p>Record good</p>
+          </button>
+
+          <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--negative" type="button">
+            <strong aria-hidden="true">-</strong>
+            <h2>Negative</h2>
+            <p>Record bad</p>
+          </button>
+
+          <section class="dashboard-info-card dashboard-detection-card">
+            <h2>Current detection</h2>
+            <p>model_label</p>
+            <strong>robot_vacuum</strong>
+            <p>relative dB <b>62 dB</b></p>
+          </section>
         </aside>
       </div>
     </section>
@@ -78,7 +103,34 @@ export function mountHomeDashboardPage({ navigate } = {}) {
 
   cleanupHomeDashboardPage();
 
-  dashboardSceneController = createDashboardHomeScene(container);
+  const syncDashboardScene = (isMobile) => {
+    if (isMobile) {
+      dashboardSceneController?.dispose?.();
+      dashboardSceneController = null;
+      container.classList.remove('is-loading');
+      return;
+    }
+
+    if (!dashboardSceneController) {
+      dashboardSceneController = createDashboardHomeScene(container);
+    }
+  };
+
+  const mediaQuery = window.matchMedia?.('(max-width: 640px)');
+  if (mediaQuery) {
+    const handleMediaChange = (event) => syncDashboardScene(event.matches);
+    syncDashboardScene(mediaQuery.matches);
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleMediaChange);
+      dashboardSceneMediaCleanup = () => mediaQuery.removeEventListener('change', handleMediaChange);
+    } else {
+      mediaQuery.addListener(handleMediaChange);
+      dashboardSceneMediaCleanup = () => mediaQuery.removeListener(handleMediaChange);
+    }
+  } else {
+    syncDashboardScene(false);
+  }
 
   const homeLink = document.querySelector('[data-dashboard-home-link]');
   homeLink?.addEventListener('click', () => {
@@ -87,6 +139,8 @@ export function mountHomeDashboardPage({ navigate } = {}) {
 }
 
 export function cleanupHomeDashboardPage() {
+  dashboardSceneMediaCleanup?.();
+  dashboardSceneMediaCleanup = null;
   dashboardSceneController?.dispose?.();
   dashboardSceneController = null;
 }

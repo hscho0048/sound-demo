@@ -1,0 +1,1285 @@
+.mobile-bottom-nav,
+.dashboard-mobile-title,
+.dashboard-mobile-sync,
+.dashboard-reaction-card,
+.dashboard-detection-card,
+.three-view-mobile-title,
+.three-view-active-pill,
+.three-title-mobile,
+.three-view-mobile-source {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --apk-bg: #f3f6fa;
+    --apk-ink: #111827;
+    --apk-muted: #68758b;
+    --apk-copy: #4b5563;
+    --apk-surface: #ffffff;
+    --apk-control: #f8fafc;
+    --apk-primary: #202838;
+    --apk-border: #c8d2e0;
+    --apk-strong-border: #717b8b;
+    --apk-card-radius: 14px;
+    --apk-page-x: 28px;
+    --apk-nav-h: 72px;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    background: var(--apk-bg);
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--apk-bg);
+  }
+
+  .mobile-bottom-nav {
+    position: fixed;
+    z-index: 60;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    height: var(--apk-nav-h);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    border-top: 2px solid var(--apk-border);
+    background: var(--apk-surface);
+  }
+
+  .mobile-tab-item {
+    display: grid;
+    min-width: 0;
+    place-items: center;
+    align-content: center;
+    gap: 4px;
+    color: var(--apk-ink);
+    font-size: 12px;
+    line-height: 1;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .mobile-tab-item span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-tab-item img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+  }
+
+  .mobile-tab-item.is-active {
+    font-weight: 700;
+  }
+
+  .app-shell,
+  .app-workspace {
+    display: block;
+    min-height: 100dvh;
+    background: var(--apk-bg);
+  }
+
+  .app-shell--desktop .sidebar {
+    display: none;
+  }
+
+  .main-content {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .app-shell--desktop .main-content {
+    padding-bottom: var(--apk-nav-h);
+  }
+
+  .app-shell--login .main-content {
+    padding-bottom: 0;
+  }
+
+  .page,
+  .thinq-dashboard-page,
+  .three-view-page,
+  .device-list-page,
+  .device-detail-page,
+  .basic-report-page,
+  .reaction-history-page,
+  .gpt-detailed-page,
+  .settings-page,
+  .profile-page,
+  .system-status-page {
+    width: 100%;
+    max-width: none;
+    min-height: auto;
+    margin: 0;
+    padding: 0 var(--apk-page-x) calc(var(--apk-nav-h) + 18px);
+    background: var(--apk-bg);
+    color: var(--apk-ink);
+  }
+
+  .dashboard-household-header,
+  .three-view-household-header,
+  .device-list-header,
+  .basic-report-header,
+  .settings-page-header,
+  .profile-page-header,
+  .system-page-header,
+  .reaction-history-header,
+  .gpt-detail-header,
+  .device-detail-topbar {
+    width: calc(100% + (var(--apk-page-x) * 2));
+    min-height: 146px;
+    margin: 0 calc(var(--apk-page-x) * -1) 20px;
+    padding: 38px calc(var(--apk-page-x) + 20px) 26px;
+    border-bottom: 2px solid var(--apk-border);
+    background: var(--apk-surface);
+  }
+
+  .dashboard-household-header {
+    position: relative;
+    display: grid;
+    align-content: center;
+  }
+
+  .dashboard-desktop-title {
+    display: none;
+  }
+
+  .dashboard-mobile-title {
+    display: block;
+  }
+
+  .dashboard-mobile-title h1,
+  .three-view-mobile-title h1,
+  .device-list-header h1,
+  .basic-report-header h1,
+  .settings-page-header h1,
+  .profile-page-header h1,
+  .system-page-header h1,
+  .reaction-history-header h1,
+  .gpt-detail-header h1,
+  .device-detail-title-group h1 {
+    margin: 0;
+    color: var(--apk-ink);
+    font-size: clamp(32px, 8vw, 38px);
+    line-height: 1.05;
+    letter-spacing: 0;
+  }
+
+  .dashboard-mobile-title p,
+  .three-view-mobile-title p,
+  .device-list-header p,
+  .basic-report-header p,
+  .settings-page-header p,
+  .profile-page-header p,
+  .system-page-header p,
+  .reaction-history-header p,
+  .gpt-detail-header p,
+  .device-detail-title-group p {
+    margin: 9px 0 0;
+    color: var(--apk-muted);
+    font-size: 21px;
+    line-height: 1.2;
+  }
+
+  .dashboard-mobile-sync {
+    position: absolute;
+    right: calc(var(--apk-page-x) + 20px);
+    bottom: 14px;
+    display: block;
+    margin: 0;
+    color: var(--apk-copy);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .dashboard-main-grid {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    padding: 6px 0 20px;
+  }
+
+  .dashboard-home-card {
+    display: none;
+  }
+
+  .dashboard-summary-column {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px 20px;
+    width: 100%;
+  }
+
+  .dashboard-info-card {
+    min-width: 0;
+    min-height: 154px;
+    padding: 20px 20px 18px;
+    border: 2px solid var(--apk-strong-border);
+    border-radius: var(--apk-card-radius);
+    background: var(--apk-surface);
+    box-shadow: none;
+  }
+
+  .dashboard-noise-card {
+    order: 1;
+  }
+
+  .dashboard-climate-card {
+    order: 2;
+  }
+
+  .dashboard-reaction-card--positive {
+    order: 3;
+  }
+
+  .dashboard-reaction-card--negative {
+    order: 4;
+  }
+
+  .dashboard-detection-card {
+    order: 5;
+  }
+
+  .dashboard-report-shortcut {
+    order: 6;
+  }
+
+  .dashboard-info-card h2,
+  .dashboard-noise-card h2,
+  .dashboard-report-shortcut h2 {
+    margin: 0;
+    color: var(--apk-ink);
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .dashboard-info-card strong {
+    display: inline-block;
+    color: var(--apk-ink);
+    font-size: 38px;
+    line-height: 1;
+  }
+
+  .dashboard-noise-card strong {
+    display: block;
+    margin-top: 7px;
+    font-size: 39px;
+  }
+
+  .dashboard-noise-card p,
+  .dashboard-report-shortcut p,
+  .dashboard-detection-card p {
+    margin: 10px 0 0;
+    color: var(--apk-muted);
+    font-size: 14px;
+    line-height: 1.25;
+  }
+
+  .dashboard-progress {
+    height: 7px;
+    margin-top: 12px;
+  }
+
+  .dashboard-reaction-card {
+    display: grid;
+    min-height: 356px;
+    place-items: center;
+    align-content: center;
+    gap: 74px;
+    border-color: var(--apk-strong-border);
+    color: var(--apk-ink);
+    background: var(--apk-surface);
+    text-align: center;
+  }
+
+  .dashboard-reaction-card > strong {
+    font-size: 44px;
+    line-height: 1;
+  }
+
+  .dashboard-reaction-card--positive > strong {
+    color: #2f7d42;
+  }
+
+  .dashboard-reaction-card--negative > strong {
+    color: #b43a32;
+  }
+
+  .dashboard-reaction-card h2 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .dashboard-reaction-card p {
+    margin: -35px 0 0;
+    color: var(--apk-muted);
+    font-size: 14px;
+  }
+
+  .dashboard-detection-card,
+  .dashboard-report-shortcut {
+    min-height: 154px;
+  }
+
+  .dashboard-detection-card strong {
+    margin-top: 3px;
+    font-size: 25px;
+  }
+
+  .dashboard-detection-card b {
+    margin-left: 8px;
+    color: var(--apk-ink);
+    font-size: 24px;
+  }
+
+  .dashboard-report-button {
+    width: 100%;
+    min-height: 38px;
+    margin-top: 14px;
+    border-radius: 11px;
+    background: #747d8e;
+    font-size: 16px;
+  }
+
+  .three-view-household-header {
+    display: grid;
+    align-content: center;
+  }
+
+  .three-view-desktop-title,
+  .three-title-desktop {
+    display: none;
+  }
+
+  .three-view-mobile-title,
+  .three-title-mobile,
+  .three-view-mobile-source {
+    display: block;
+  }
+
+  .three-view-active-pill {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 46px;
+    align-items: center;
+    gap: 12px;
+    margin: -6px 0 16px 14px;
+    padding: 0 28px 0 15px;
+    border: 2px solid var(--apk-border);
+    border-radius: 999px;
+    background: #f7f9fc;
+    color: #1f2937;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .three-view-active-pill span {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3f8958;
+  }
+
+  .three-view-content {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .three-view-stage {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding: 24px 32px 28px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    background: #eef6ff;
+    overflow: hidden;
+  }
+
+  .three-view-stage h2 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .three-view-mobile-source {
+    margin: 6px 0 14px;
+    color: var(--apk-muted);
+    font-size: 14px;
+  }
+
+  .three-view-container {
+    width: 100%;
+    height: 330px;
+    min-height: 330px;
+    margin: 0;
+    border: 0;
+    border-radius: 12px;
+    background: #eef6ff;
+  }
+
+  .appliance-noise-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    margin-top: 8px;
+    padding: 0;
+  }
+
+  .appliance-noise-card {
+    min-height: 92px;
+    padding: 15px 20px;
+    border: 2px solid var(--apk-border);
+    border-radius: 10px;
+    background: var(--apk-surface);
+  }
+
+  .appliance-noise-card h2 {
+    margin: 0;
+    font-size: 19px;
+  }
+
+  .appliance-noise-card p {
+    margin: 12px 0 0;
+    color: var(--apk-muted);
+    font-size: 14px;
+    line-height: 1.05;
+  }
+
+  .appliance-noise-card__body {
+    display: block;
+  }
+
+  .appliance-picture-slot {
+    display: none;
+  }
+
+  .appliance-noise-card strong {
+    display: block;
+    margin-top: 0;
+    color: var(--apk-muted);
+    font-size: 14px;
+    line-height: 1;
+    white-space: normal;
+  }
+
+  .basic-report-page {
+    padding-top: 0;
+  }
+
+  .basic-report-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 132px;
+    align-items: center;
+    gap: 4px 10px;
+    min-height: 146px;
+    padding-right: calc(var(--apk-page-x) + 10px);
+    padding-left: calc(var(--apk-page-x) + 10px);
+  }
+
+  .basic-report-header h1 {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: clamp(30px, 7.4vw, 34px);
+  }
+
+  .basic-report-header p {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: 16px;
+  }
+
+  .report-period-button {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: 132px;
+    min-height: 50px;
+    border: 2px solid var(--apk-border);
+    border-radius: 999px;
+    background: var(--apk-control);
+    color: var(--apk-copy);
+    box-shadow: none;
+    font-size: 14px;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .report-appliance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    padding: 18px 22px 12px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    background: var(--apk-surface);
+  }
+
+  .report-appliance-grid::before {
+    content: "Main summary";
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+    color: var(--apk-ink);
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  .report-appliance-card {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 40px auto;
+    justify-items: center;
+    align-content: start;
+    min-height: 112px;
+    padding: 10px 5px 8px;
+    border: 2px solid var(--apk-border);
+    border-radius: 12px;
+    background: var(--apk-control);
+    overflow: hidden;
+  }
+
+  .report-appliance-card h2 {
+    order: 1;
+    margin: 0 0 2px;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: clamp(16px, 4vw, 20px);
+    line-height: 1.1;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .report-face-viewer {
+    position: relative;
+    top: auto;
+    right: auto;
+    order: 2;
+    display: block;
+    width: 38px;
+    height: 38px;
+    margin: 1px auto;
+    overflow: visible;
+  }
+
+  .report-face-viewer canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  .report-face-trigger {
+    top: 36px;
+    right: auto;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translateX(-50%);
+  }
+
+  .report-appliance-metrics {
+    order: 3;
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .report-metric-box,
+  .report-metric-box--soft {
+    display: block;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--apk-copy);
+    text-align: center;
+  }
+
+  .report-metric-box strong {
+    display: inline;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .report-metric-box span {
+    display: inline;
+    color: var(--apk-copy);
+    font-size: 11px;
+  }
+
+  .report-overview-panel {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    width: 100%;
+    min-height: 0;
+    margin: 16px 0 18px;
+    padding: 20px 18px 12px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+  }
+
+  .report-panel-heading {
+    font-size: clamp(20px, 5vw, 24px);
+  }
+
+  .reaction-pill-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .reaction-pill {
+    min-height: 30px;
+    border-radius: 999px;
+    font-size: 18px;
+  }
+
+  .sensitivity-ranking [role="listitem"] {
+    grid-template-columns: minmax(92px, auto) minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .sensitivity-ranking [role="listitem"] > span:first-child {
+    font-size: 17px;
+  }
+
+  .ranking-bar {
+    height: 22px;
+  }
+
+  .report-caution-box {
+    display: block;
+    min-height: 58px;
+    padding: 12px 14px;
+    border: 4px solid #d892a3;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  .report-caution-box .report-panel-heading,
+  .report-caution-box > span:not(.report-panel-heading) {
+    display: inline;
+    margin: 0 6px 0 0;
+    font-size: 16px;
+  }
+
+  .report-caution-box strong {
+    display: block;
+    margin-top: 6px;
+    font-size: clamp(22px, 6vw, 28px);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+  }
+
+  .report-lower-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .report-detail-card {
+    min-height: 0;
+    padding: 14px 16px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    box-shadow: none;
+  }
+
+  .low-noise-content {
+    grid-template-columns: 124px minmax(0, 1fr);
+    gap: 14px;
+    padding: 10px 0 0;
+  }
+
+  .donut-chart {
+    width: 112px;
+    height: 112px;
+  }
+
+  .donut-legend {
+    min-width: 0;
+    gap: 10px;
+  }
+
+  .donut-legend p {
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .donut-legend p strong,
+  .donut-legend p b {
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .donut-legend p strong {
+    overflow-wrap: anywhere;
+  }
+
+  .donut-legend p b {
+    text-align: right;
+    white-space: normal;
+  }
+
+  .donut-legend small {
+    width: 100%;
+    font-size: 11px;
+  }
+
+  .gpt-report-card {
+    background: var(--apk-ink);
+    color: var(--apk-surface);
+  }
+
+  .gpt-report-card h2,
+  .gpt-report-card p {
+    color: var(--apk-surface);
+  }
+
+  #generate-gpt-report {
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .settings-page,
+  .profile-page,
+  .system-status-page {
+    padding-top: 0;
+  }
+
+  .settings-page-header,
+  .profile-page-header,
+  .system-page-header {
+    display: grid;
+    align-content: center;
+    gap: 4px;
+  }
+
+  .settings-page-header h1,
+  .profile-page-header h1,
+  .system-page-header h1 {
+    font-size: clamp(34px, 9vw, 42px);
+  }
+
+  .settings-page-header p,
+  .profile-page-header p,
+  .system-page-header p {
+    max-width: 340px;
+    font-size: 17px;
+  }
+
+  .settings-layout,
+  .profile-layout,
+  .system-status-shell {
+    display: grid;
+    width: 100%;
+    max-width: none;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .settings-category-panel,
+  .profile-category-panel,
+  .system-category-panel {
+    grid-area: tabs;
+    display: grid;
+    width: 100%;
+    min-height: 0;
+    height: auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 14px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    background: var(--apk-surface);
+  }
+
+  .settings-tab,
+  .profile-category-panel .settings-tab,
+  .system-category-panel .settings-tab {
+    display: inline-flex;
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    border: 2px solid var(--apk-border);
+    border-radius: 10px;
+    background: var(--apk-control);
+    color: #374151;
+    font-size: clamp(13px, 3.25vw, 15px);
+    font-weight: 800;
+    line-height: 1.05;
+    box-shadow: none;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .settings-tab.is-active,
+  .profile-category-panel .settings-tab.is-active,
+  .system-category-panel .settings-tab.is-active {
+    border-color: var(--apk-strong-border);
+    background: #b8bdc7;
+    color: var(--apk-surface);
+  }
+
+  .settings-card,
+  .profile-card,
+  .system-card,
+  .system-guide-card,
+  .system-error-log,
+  .system-overall-banner {
+    min-height: 0;
+    padding: 18px 22px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    background: var(--apk-surface);
+  }
+
+  .settings-card h2,
+  .profile-card h2,
+  .system-card h2,
+  .system-guide-card h2,
+  .system-error-log h2,
+  .system-overall-banner h2 {
+    font-size: 19px;
+  }
+
+  .settings-card p,
+  .profile-card p,
+  .system-card p,
+  .system-guide-card li,
+  .system-overall-banner p {
+    color: var(--apk-muted);
+    font-size: 14px;
+  }
+
+  .settings-avoidance-card,
+  .settings-consent-card,
+  .settings-data-card,
+  .settings-save-card {
+    min-height: 106px;
+  }
+
+  .settings-layout {
+    grid-template-areas:
+      "tabs"
+      "noise"
+      "sensitivity"
+      "avoidance"
+      "consent"
+      "data"
+      "save";
+  }
+
+  .profile-layout {
+    grid-template-areas:
+      "tabs"
+      "identity"
+      "account"
+      "security"
+      "actions"
+      "notice";
+  }
+
+  .system-status-shell {
+    grid-template-areas:
+      "tabs"
+      "status";
+  }
+
+  .profile-identity-card {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    align-items: center;
+    gap: 24px;
+  }
+
+  .profile-photo-placeholder {
+    width: 116px;
+    height: 116px;
+  }
+
+  .profile-identity-card h2 {
+    font-size: 30px;
+  }
+
+  .profile-account-card p {
+    display: inline-block;
+    margin-right: 28px;
+    font-size: 18px;
+  }
+
+  .system-status-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "overall overall"
+      "spring flutter"
+      "sensor model"
+      "log log"
+      "guide guide";
+    gap: 10px;
+  }
+
+  .system-overall-banner {
+    border-left: 13px solid #bd832c;
+  }
+
+  .system-banner-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .system-guide-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 146px;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .system-guide-card ol {
+    display: none;
+  }
+
+  .system-retry-button {
+    min-height: 44px;
+    border-radius: 999px;
+    background: #252d3d;
+  }
+
+  .system-error-log table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .system-error-log {
+    overflow: hidden;
+  }
+
+  .system-error-log th,
+  .system-error-log td {
+    overflow: hidden;
+    padding-right: 4px;
+    padding-left: 4px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .device-list-page,
+  .device-detail-page,
+  .reaction-history-page,
+  .gpt-detailed-page {
+    padding-top: 0;
+  }
+
+  .device-list-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .device-list-heading {
+    display: grid;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .device-list-header h1 {
+    font-size: clamp(32px, 8vw, 38px);
+  }
+
+  .device-list-header p {
+    max-width: 220px;
+    font-size: clamp(16px, 4vw, 20px);
+    line-height: 1.22;
+  }
+
+  .device-add-button {
+    width: auto;
+    min-width: 0;
+    max-width: 42vw;
+    min-height: 52px;
+    justify-self: end;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--apk-primary);
+    font-size: clamp(14px, 3.5vw, 17px);
+    white-space: nowrap;
+  }
+
+  .device-filter-bar,
+  .device-warning-banner,
+  .device-list-card,
+  .reaction-filter-panel,
+  .reaction-table-panel,
+  .reaction-detail-panel,
+  .reaction-empty-state,
+  .reaction-pending-note,
+  .gpt-detail-card,
+  .gpt-analysis-note {
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    box-shadow: none;
+  }
+
+  .device-filter-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .device-filter-bar button,
+  .device-filter-bar input {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    min-height: 44px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: clamp(14px, 3.6vw, 16px);
+    line-height: 1.1;
+  }
+
+  .device-filter-bar button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .device-filter-bar label {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .device-warning-banner {
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    gap: 14px;
+    min-height: 0;
+    padding: 18px;
+    border-color: #c98228;
+    border-radius: var(--apk-card-radius);
+  }
+
+  .device-warning-dot {
+    width: 34px;
+    height: 34px;
+  }
+
+  .device-warning-banner p {
+    font-size: clamp(16px, 4vw, 19px);
+    line-height: 1.35;
+  }
+
+  .device-warning-banner button {
+    width: auto;
+    min-width: 74px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0 14px;
+    color: var(--apk-copy);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .device-list-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .device-list-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 108px;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    background: #d9d9d9;
+  }
+
+  .device-list-picture,
+  .device-refresh-icon {
+    display: none;
+  }
+
+  .device-list-meta p:first-child {
+    overflow: hidden;
+    font-size: clamp(21px, 5vw, 24px);
+    font-weight: 800;
+    line-height: 1.12;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .device-list-meta {
+    min-width: 0;
+  }
+
+  .device-list-meta p {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .device-list-card::after {
+    content: "Detail";
+    align-self: end;
+    justify-self: end;
+    min-width: 78px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: var(--apk-primary);
+    color: var(--apk-surface);
+    text-align: center;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .device-detail-topbar {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .device-detail-title-group {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .device-detail-title-group p {
+    display: none;
+  }
+
+  .device-detail-back {
+    grid-row: 1;
+    width: 36px;
+    height: 36px;
+    font-size: 32px;
+  }
+
+  .device-detail-title-group h1 {
+    grid-column: 2;
+    font-size: 35px;
+  }
+
+  .related-events-button {
+    width: min(100%, 254px);
+    min-height: 44px;
+    border-radius: 999px;
+    background: var(--apk-ink);
+  }
+
+  .device-detail-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .device-detail-card {
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+  }
+
+  .device-detail-model-card {
+    min-height: 304px;
+  }
+
+  .device-measurement-card {
+    display: grid;
+  }
+
+  .gpt-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .gpt-detail-card {
+    min-height: 0;
+  }
+
+  .reaction-filter-panel {
+    padding: 20px;
+  }
+
+  .reaction-filter-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reaction-table-head {
+    display: none;
+  }
+
+  .reaction-history-row {
+    display: grid;
+    grid-template-columns: 20px 72px 1fr 84px;
+    min-height: 88px;
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+  }
+
+  .login-page,
+  .account-page {
+    min-height: 100dvh;
+    padding: 0 var(--apk-page-x) 18px;
+    background: var(--apk-bg);
+  }
+
+  .login-window,
+  .account-window {
+    min-height: auto;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .login-stage {
+    display: grid;
+    min-height: auto;
+    padding: 60px 16px 0;
+  }
+
+  .login-card,
+  .account-card {
+    border: 2px solid var(--apk-border);
+    border-radius: var(--apk-card-radius);
+    background: var(--apk-surface);
+    box-shadow: none;
+  }
+
+}

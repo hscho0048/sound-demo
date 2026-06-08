@@ -2,6 +2,7 @@ import './styles/main.css';
 import './styles/settings-suite.css';
 import './styles/three-home-fixes.css';
 import './styles/accessibility.css';
+import './styles/mobile-apk.css';
 import { renderLoginPage, mountLoginPage } from './pages/LoginPage.js';
 import { renderCreateAccountPage, mountCreateAccountPage } from './pages/CreateAccount.js';
 import {
@@ -83,29 +84,81 @@ const routes = [
   { pattern: /^#\/profile$/, title: 'Profile', render: renderProfilePage, mount: mountProfilePage }
 ];
 
-const navItems = [
-  { href: '#/home', label: 'Home', icon: 'home' },
-  { href: '#/three-home', label: '3D Home', icon: 'box' },
-  { href: '#/devices', label: 'Devices', icon: 'box' },
-  { href: '#/reports', label: 'Report', icon: 'box' }
+const primaryNavItems = [
+  {
+    href: '#/home',
+    label: 'Home',
+    mobileLabel: 'Home',
+    desktopIcon: 'home',
+    mobileIcon: '/assets/icons/homel.svg',
+    match: /^#\/home$/
+  },
+  {
+    href: '#/three-home',
+    label: '3D Home',
+    mobileLabel: '3D',
+    desktopIcon: 'box',
+    mobileIcon: '/assets/icons/3Dhome.svg',
+    match: /^#\/three-home$/
+  },
+  {
+    href: '#/devices',
+    label: 'Devices',
+    mobileLabel: 'Devices',
+    desktopIcon: 'box',
+    mobileIcon: '/assets/icons/device.svg',
+    match: /^#\/devices(\/.*)?$/
+  },
+  {
+    href: '#/reports',
+    label: 'Report',
+    mobileLabel: 'Report',
+    desktopIcon: 'box',
+    mobileIcon: '/assets/icons/report.svg',
+    match: /^#\/reports(\/(reaction-history|gpt-detailed))?$/
+  }
 ];
+
+const settingsNavItem = {
+  href: '#/settings',
+  label: 'Settings',
+  mobileLabel: 'Settings',
+  mobileIcon: '/assets/icons/setting.svg',
+  match: /^#\/(settings|profile|reports\/system-status)$/
+};
 
 function navigate(hash) {
   window.location.hash = hash;
 }
 
-function isNavActive(currentHash, href) {
-  return currentHash === href || currentHash.startsWith(`${href}/`);
+function isNavActive(currentHash, item) {
+  return item.match.test(currentHash);
 }
 
 function navIcon(icon) {
   return `<span class="nav-symbol nav-symbol--${escapeHtml(icon)}" aria-hidden="true"></span>`;
 }
 
+function mobileBottomNav(currentHash) {
+  const nav = [...primaryNavItems, settingsNavItem]
+    .map((item) => {
+      const active = isNavActive(currentHash, item);
+      return `
+        <a class="mobile-tab-item ${active ? 'is-active' : ''}" href="${escapeHtml(item.href)}">
+          <img src="${escapeHtml(item.mobileIcon)}" alt="" aria-hidden="true" />
+          <span>${escapeHtml(item.mobileLabel)}</span>
+        </a>
+      `;
+    })
+    .join('');
+
+  return `<nav class="mobile-bottom-nav" aria-label="Mobile primary navigation">${nav}</nav>`;
+}
+
 function shell(content, routeTitle) {
   const currentHash = window.location.hash || '#/login';
   const hideNav = currentHash === '#/login' || currentHash === '#/create-account';
-  const settingsActive = currentHash === '#/settings' || currentHash === '#/profile' || currentHash === '#/reports/system-status';
+  const settingsActive = isNavActive(currentHash, settingsNavItem);
 
   if (hideNav) {
     return `
@@ -115,13 +168,13 @@ function shell(content, routeTitle) {
     `;
   }
 
-  const nav = navItems
-    .map(({ href, label, icon }) => {
-      const active = isNavActive(currentHash, href);
+  const nav = primaryNavItems
+    .map((item) => {
+      const active = isNavActive(currentHash, item);
       return `
-        <a class="sidebar-nav-item ${active ? 'is-active' : ''}" href="${href}">
-          ${navIcon(icon)}
-          <span>${escapeHtml(label)}</span>
+        <a class="sidebar-nav-item ${active ? 'is-active' : ''}" href="${item.href}">
+          ${navIcon(item.desktopIcon)}
+          <span>${escapeHtml(item.label)}</span>
         </a>
       `;
     })
@@ -142,6 +195,7 @@ function shell(content, routeTitle) {
 
         <main class="main-content">${content}</main>
       </div>
+      ${mobileBottomNav(currentHash)}
     </div>
   `;
 }

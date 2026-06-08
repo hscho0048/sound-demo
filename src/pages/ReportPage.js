@@ -27,24 +27,22 @@ function getReactionMood(device) {
 function applianceCard(device, index) {
   return `
     <article class="report-appliance-card">
-      <div>
-        <h2>${escapeHtml(device.name)}</h2>
-        <button
-          type="button"
-          class="report-appliance-metrics"
-          data-reaction-history-link
-          aria-label="${escapeHtml(device.name)} 반응 기록 열기"
-        >
-          <span class="report-metric-box report-metric-box--soft">
-            <strong>${escapeHtml(device.positive)}</strong>
-            <span>positive</span>
-          </span>
-          <span class="report-metric-box">
-            <strong>${escapeHtml(device.negative)}</strong>
-            <span>negative</span>
-          </span>
-        </button>
-      </div>
+      <h2>${escapeHtml(device.name)}</h2>
+      <button
+        type="button"
+        class="report-appliance-metrics"
+        data-reaction-history-link
+        aria-label="${escapeHtml(device.name)} 반응 기록 열기"
+      >
+        <span class="report-metric-box report-metric-box--soft">
+          <strong>${escapeHtml(device.positive)}</strong>
+          <span>positive</span>
+        </span>
+        <span class="report-metric-box">
+          <strong>${escapeHtml(device.negative)}</strong>
+          <span>negative</span>
+        </span>
+      </button>
       <div
         class="report-face-viewer"
         data-face-mood="${escapeHtml(getReactionMood(device))}"
