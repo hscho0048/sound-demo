@@ -1,12 +1,12 @@
 import { escapeHtml } from '../utils/html.js';
 
 const notificationTypeText = {
-  LOUD_NOISE_DETECTED: '큰 소음 감지',
-  SENSITIVE_APPLIANCE_DETECTED: '민감 가전 소음 감지',
-  AUTO_CONTROL_APPLIED: '자동 대응 적용',
-  ROBOT_ROUTE_CHANGED: '로봇청소기 경로 변경',
-  NON_CONTROLLABLE_WARNING: '조절 불가 가전 주의',
-  ROUTINE_CREATED: '새 루틴 생성'
+  BIG_NOISE: '큰 소음 감지',
+  SENSITIVE_APPLIANCE: '민감 가전 소음 감지',
+  COMMAND_STATUS: '제어 명령 상태',
+  ROBOT_AVOIDANCE: '로봇청소기 회피 경로',
+  ROUTINE_CREATED: '루틴 생성',
+  NON_CONTROLLABLE_WARNING: '제어 불가 가전 주의'
 };
 
 export function NotificationBanner(notification) {

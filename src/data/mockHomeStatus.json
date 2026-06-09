@@ -1,6 +1,6 @@
 {
   "homeId": "home-demo-001",
-  "currentNoiseState": "SENSITIVE_APPLIANCE_DETECTED",
+  "currentNoiseState": "SENSITIVE_APPLIANCE",
   "currentServiceLabel": "robot_vacuum",
   "currentModelLabel": "vacuum_cleaner",
   "confidence": 0.91,
@@ -13,7 +13,7 @@
   "createdAt": "2026-06-03T12:15:00+09:00",
   "latestNotification": {
     "id": "noti-001",
-    "type": "ROBOT_ROUTE_CHANGED",
+    "type": "ROBOT_AVOIDANCE",
     "title": "로봇청소기 경로가 변경되었습니다",
     "message": "거실에서 민감 소음이 감지되어 회피 경로를 3D 화면에 반영했습니다.",
     "read": false
@@ -101,7 +101,7 @@
   "notifications": [
     {
       "id": "noti-001",
-      "type": "ROBOT_ROUTE_CHANGED",
+      "type": "ROBOT_AVOIDANCE",
       "title": "로봇청소기 경로 변경",
       "message": "거실 회피 구역이 적용되었습니다.",
       "read": false,
@@ -109,7 +109,7 @@
     },
     {
       "id": "noti-002",
-      "type": "SENSITIVE_APPLIANCE_DETECTED",
+      "type": "SENSITIVE_APPLIANCE",
       "title": "민감 가전 소음 감지",
       "message": "로봇청소기 소음이 기준치를 넘었습니다.",
       "read": false,
