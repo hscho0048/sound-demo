@@ -42,12 +42,12 @@ export async function renderHomeDashboardPage() {
   return `
     <section class="page thinq-dashboard-page" aria-label="Main dashboard">
       <header class="dashboard-household-header">
-        <h1 class="dashboard-desktop-title">Household: Cho Home</h1>
+        <h1 class="dashboard-desktop-title">호성 님의 Home</h1>
         <div class="dashboard-mobile-title">
           <h1>ThinQ Clone</h1>
           <p>Seocho Home · Live dashboard</p>
         </div>
-        <p class="dashboard-mobile-sync">Last sync: ${escapeHtml(syncTime)}</p>
+        <p class="dashboard-mobile-sync">마지막 동기화: ${escapeHtml(syncTime)}</p>
         <div
           id="dashboard-server-state"
           class="hidden"
@@ -65,22 +65,22 @@ export async function renderHomeDashboardPage() {
 
         <aside class="dashboard-summary-column" aria-label="Home summary">
           <section class="dashboard-info-card dashboard-climate-card">
-            <h2>Room climate</h2>
+            <h2>실내 환경</h2>
             <strong>${temperature} &deg;C</strong>
-            <strong>${humidity}%</strong>
+            <strong>습도 ${humidity}%</strong>
           </section>
 
           <section class="dashboard-info-card dashboard-noise-card">
-            <h2>Today's noise status</h2>
-            <strong>Stable</strong>
-            <p>No critical event detected</p>
+            <h2>소음 상태</h2>
+            <strong>안정</strong>
+            <p>특이사항이 감지되지 않았습니다</p>
             <div class="dashboard-progress" aria-hidden="true">
               <span style="width: 76%"></span>
             </div>
           </section>
 
           <section class="dashboard-info-card dashboard-report-shortcut">
-            <h2>Basic report shortcut</h2>
+            <h2>오늘의 리포트</h2>
             <p>Open daily noise summary and reaction overview.</p>
             <a class="dashboard-report-button" href="#/reports">View report</a>
           </section>

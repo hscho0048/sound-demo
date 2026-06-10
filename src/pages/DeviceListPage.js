@@ -6,54 +6,56 @@ import {
 } from './DeviceConnectionFailurePopup.js';
 
 const deviceRows = [
-  { id: 'washer-main', room: 'Laundry Area', decibel: 71, time: '12:30' },
-  { id: 'robot-living', room: 'Living Room', decibel: 71, time: '12:30' },
-  { id: 'washer-laundry-2', room: 'Laundry Area', decibel: '--', time: '11:30' },
-  { id: 'washer-laundry-3', room: 'Laundry Area', decibel: 71, time: '12:30' }
+  { id: 'washer-main', room: '세탁실', decibel: 71, time: '12:30' },
+  { id: 'robot-living', room: '거실', decibel: 71, time: '12:30' },
+  { id: 'washer-laundry-2', room: '세탁실', decibel: '--', time: '11:30' },
+  { id: 'washer-laundry-3', room: '세탁실', decibel: 71, time: '12:30' },
+  { id: 'robot-kitchen-2', room: '주방', decibel: 64, time: '12:10' },
+  { id: 'hub-study-1', room: '작업실', decibel: 19, time: '11:52' }
 ];
 
 function deviceCard(device) {
   const failed = isDeviceConnectionFailed(device);
   return `
-    <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.room)} device detail" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
+    <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.room)} 기기 상세" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
       <div class="device-list-picture" aria-hidden="true"></div>
       <div class="device-list-meta">
         <p>${escapeHtml(device.room)}</p>
         <p>${escapeHtml(device.decibel)} dB</p>
         <p>${escapeHtml(device.time)}</p>
       </div>
-      <span class="device-refresh-icon" aria-hidden="true">↻</span>
+      <span class="device-refresh-icon" aria-hidden="true">+</span>
     </a>
   `;
 }
 
 export async function renderDeviceListPage() {
   return `
-    <section class="page device-list-page" aria-label="Device List Screen">
+    <section class="page device-list-page" aria-label="기기 목록 화면">
       <header class="device-list-header">
         <div class="device-list-heading">
-          <h1>Devices</h1>
-          <p>Total 8 registered · 6 connected · 2 unstable</p>
+          <h1>기기</h1>
+          <p>총 8대 등록 · 6대 연결 중 · 2대 상태 불안정</p>
         </div>
-        <button class="device-add-button" type="button">Add device</button>
+        <button class="device-add-button" type="button">기기 추가</button>
       </header>
 
-      <section class="device-filter-bar" aria-label="Device filters">
-        <button type="button">Room: All</button>
-        <button type="button">Connection: All</button>
+      <section class="device-filter-bar" aria-label="기기 필터">
+        <button type="button">공간: 전체</button>
+        <button type="button">연결 상태: 전체</button>
         <label>
-          <span class="hidden">Search device by name</span>
-          <input type="search" placeholder="Search device by name" />
+          <span class="hidden">기기 이름 검색</span>
+          <input type="search" placeholder="기기 이름 검색" />
         </label>
       </section>
 
-      <section class="device-warning-banner" aria-label="Device connection warning">
+      <section class="device-warning-banner" aria-label="기기 연결 경고">
         <span class="device-warning-dot" aria-hidden="true"></span>
-        <p>2 devices are disconnected or unstable. Check connection before relying on live status.</p>
-        <button type="button">Review</button>
+        <p>2대의 기기가 연결 해제되었거나 상태가 불안정합니다. 실시간 상태를 확인하기 전에 연결을 점검하세요.</p>
+        <button type="button">확인</button>
       </section>
 
-      <section class="device-list-grid" aria-label="Registered devices">
+      <section class="device-list-grid" aria-label="등록된 기기">
         ${deviceRows.map(deviceCard).join('')}
       </section>
     </section>
