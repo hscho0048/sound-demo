@@ -3,6 +3,7 @@ import './styles/settings-suite.css';
 import './styles/three-home-fixes.css';
 import './styles/accessibility.css';
 import './styles/mobile-apk.css';
+import './styles/polish.css';
 import { renderLoginPage, mountLoginPage } from './pages/LoginPage.js';
 import { renderCreateAccountPage, mountCreateAccountPage } from './pages/CreateAccount.js';
 import {
@@ -37,7 +38,7 @@ const routes = [
   },
   {
     pattern: /^#\/three-home$/,
-    title: '3D Home',
+    title: '3D View',
     render: renderThreeDHomePage,
     mount: mountThreeDHomePage,
     cleanup: cleanupThreeDHomePage
@@ -101,15 +102,15 @@ const primaryNavItems = [
     href: '#/home',
     label: 'Home',
     mobileLabel: 'Home',
-    desktopIcon: 'home',
+    desktopIcon: 'house',
     mobileIcon: '/assets/icons/homel.svg',
     match: /^#\/home$/
   },
   {
     href: '#/three-home',
-    label: '3D Home',
+    label: '3D View',
     mobileLabel: '3D',
-    desktopIcon: 'box',
+    desktopIcon: 'cube',
     mobileIcon: '/assets/icons/3Dhome.svg',
     match: /^#\/three-home$/
   },
@@ -117,7 +118,7 @@ const primaryNavItems = [
     href: '#/devices',
     label: 'Devices',
     mobileLabel: 'Devices',
-    desktopIcon: 'box',
+    desktopIcon: 'grid',
     mobileIcon: '/assets/icons/device.svg',
     match: /^#\/devices(\/.*)?$/
   },
@@ -125,7 +126,7 @@ const primaryNavItems = [
     href: '#/reports',
     label: 'Report',
     mobileLabel: 'Report',
-    desktopIcon: 'box',
+    desktopIcon: 'chart',
     mobileIcon: '/assets/icons/report.svg',
     match: /^#\/reports(\/(reaction-history|gpt-detailed))?$/
   }
@@ -196,11 +197,11 @@ function shell(content, routeTitle) {
     <div class="app-shell app-shell--desktop">
       <div class="app-workspace">
         <aside class="sidebar">
-          <h1>ThinQ Clone</h1>
+          <h1>SoundCare</h1>
           <nav>${nav}</nav>
           <div class="sidebar-footer">
             <a class="sidebar-footer-link ${settingsActive ? 'is-active' : ''}" href="#/settings" aria-label="Settings">
-              <img class="settings-symbol" src="/assets/icons/setting.svg" alt="" aria-hidden="true" />
+              <span class="settings-symbol settings-symbol--gear" aria-hidden="true"></span>
             </a>
           </div>
         </aside>
@@ -227,7 +228,7 @@ async function renderRoute() {
   const { route, params } = matchRoute(hash);
   currentCleanup?.();
   currentCleanup = route.cleanup ?? null;
-  app.innerHTML = shell('<section class="page"><p>Loading...</p></section>', route.title);
+  app.innerHTML = shell('<section class="page"><p>Loading</p></section>', route.title);
 
   try {
     const content = await route.render({ params, navigate });

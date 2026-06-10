@@ -1,0 +1,645 @@
+/* ============================================================
+   Polish pass — final refinement layer (imported last, wins the
+   cascade). Plum/pink glass theme: real nav icons, typographic
+   hierarchy, layered depth, micro-interactions.
+   ============================================================ */
+
+:root {
+  --pp-ink: #4b164c;
+  --pp-ink-strong: #36103a;
+  --pp-pink: #dd88cf;
+  --pp-pink-soft: rgba(221, 136, 207, 0.16);
+  --pp-muted: rgba(75, 22, 76, 0.6);
+  --pp-card-radius: 16px;
+  --pp-ring: 0 0 0 4px rgba(221, 136, 207, 0.32);
+}
+
+/* --- Ambient background wash --- */
+body,
+.app-shell--desktop {
+  background:
+    radial-gradient(1100px 600px at 88% -10%, rgba(221, 136, 207, 0.16), transparent 60%),
+    radial-gradient(900px 700px at -10% 100%, rgba(221, 136, 207, 0.1), transparent 55%),
+    #f6f3f7;
+}
+
+/* --- Sidebar: brand + real icons --- */
+.app-shell--desktop .sidebar h1 {
+  background: linear-gradient(115deg, var(--pp-ink) 30%, var(--pp-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.app-shell--desktop .sidebar nav a,
+.sidebar-nav-item {
+  border-radius: 12px;
+  font-weight: 600;
+  color: rgba(75, 22, 76, 0.62);
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.app-shell--desktop .sidebar nav a.is-active,
+.app-shell--desktop .sidebar nav a:hover {
+  background: rgba(248, 231, 246, 0.92) !important;
+  color: var(--pp-ink-strong) !important;
+  box-shadow: inset 3px 0 0 var(--pp-pink) !important;
+}
+
+.nav-symbol--house::before,
+.nav-symbol--cube::before,
+.nav-symbol--grid::before,
+.nav-symbol--chart::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  background: currentColor;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.nav-symbol--house::before {
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 2.5 11h2.6v9h5.4v-6h3v6h5.4v-9h2.6L12 3z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3 2.5 11h2.6v9h5.4v-6h3v6h5.4v-9h2.6L12 3z"/></svg>');
+}
+
+.nav-symbol--cube::before {
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2 2 7v10l10 5 10-5V7L12 2zm0 2.2L19.5 8 12 11.8 4.5 8 12 4.2zM4 9.6l7 3.5v7L4 16.6v-7zm16 0v7l-7 3.5v-7l7-3.5z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2 2 7v10l10 5 10-5V7L12 2zm0 2.2L19.5 8 12 11.8 4.5 8 12 4.2zM4 9.6l7 3.5v7L4 16.6v-7zm16 0v7l-7 3.5v-7l7-3.5z"/></svg>');
+}
+
+.nav-symbol--grid::before {
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>');
+}
+
+.nav-symbol--chart::before {
+  -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h3v8H5zM10.5 4h3v16h-3zM16 9h3v11h-3z"/></svg>');
+  mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 12h3v8H5zM10.5 4h3v16h-3zM16 9h3v11h-3z"/></svg>');
+}
+
+.settings-symbol--gear {
+  display: block;
+  width: 26px;
+  height: 26px;
+  background: rgba(75, 22, 76, 0.55);
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.61 3.61 0 0 1 8.4 12c0-1.98 1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96a7.03 7.03 0 0 0-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.484.484 0 0 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.61 3.61 0 0 1 8.4 12c0-1.98 1.62-3.6 3.6-3.6s3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>') center / contain no-repeat;
+  transition: background 0.18s ease, transform 0.3s ease;
+}
+
+.sidebar-footer-link {
+  border-radius: 12px;
+  transition: background 0.18s ease;
+}
+
+.sidebar-footer-link:hover {
+  background: rgba(248, 231, 246, 0.92);
+}
+
+.sidebar-footer-link:hover .settings-symbol--gear {
+  background: var(--pp-ink);
+  transform: rotate(40deg);
+}
+
+/* --- Cards: consistent radius, hairline + layered depth --- */
+.dashboard-info-card,
+.device-filter-bar,
+.device-warning-banner,
+.device-list-card,
+.device-detail-card,
+.report-appliance-card,
+.report-overview-panel,
+.report-detail-card,
+.reaction-filter-panel,
+.reaction-table-panel,
+.reaction-detail-panel,
+.settings-card,
+.settings-category-panel,
+.profile-card,
+.system-card,
+.system-guide-card,
+.system-error-log,
+.system-overall-banner {
+  border-radius: var(--pp-card-radius);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 2px 6px rgba(75, 22, 76, 0.05),
+    0 14px 34px rgba(75, 22, 76, 0.08) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-home-card,
+.device-detail-model-viewer,
+.three-view-container {
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 140% at 85% -20%, rgba(221, 136, 207, 0.38), transparent 55%),
+    linear-gradient(150deg, #41123f 0%, #4b164c 45%, #6a2569 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 24px 60px rgba(75, 22, 76, 0.32) !important;
+}
+
+/* --- Dashboard hierarchy --- */
+.dashboard-home-card {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-home-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 30px 70px rgba(75, 22, 76, 0.4) !important;
+}
+
+.dashboard-home-card h2 {
+  font-size: clamp(20px, 1.8vw, 26px);
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.dashboard-home-card .dashboard-sync {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-end;
+  width: fit-content;
+  margin-left: auto;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  opacity: 1;
+}
+
+.dashboard-info-card h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--pp-muted);
+}
+
+.dashboard-info-card > strong {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--pp-ink-strong);
+}
+
+.dashboard-climate-card strong:first-of-type {
+  font-size: clamp(26px, 2.2vw, 34px);
+}
+
+.dashboard-climate-card strong:last-of-type {
+  font-size: clamp(17px, 1.4vw, 21px);
+  color: var(--pp-muted);
+}
+
+.dashboard-noise-card strong {
+  font-size: clamp(24px, 2vw, 30px);
+}
+
+.dashboard-noise-card p,
+.dashboard-report-shortcut p,
+.dashboard-detection-card p {
+  color: var(--pp-muted);
+  font-size: 13px;
+}
+
+.dashboard-progress {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(75, 22, 76, 0.1) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-progress span {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pp-pink), #b75bae) !important;
+}
+
+.dashboard-reaction-card strong {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 19px;
+  font-weight: 800;
+  background: var(--pp-pink-soft);
+  color: var(--pp-ink);
+}
+
+.dashboard-reaction-card:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Buttons: pills + lift --- */
+button,
+.primary-button,
+.device-add-button,
+.dashboard-report-button,
+.related-events-button,
+.report-period-button {
+  border-radius: 999px;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+button:hover,
+.primary-button:hover,
+.device-add-button:hover,
+.dashboard-report-button:hover {
+  transform: translateY(-1px);
+}
+
+button:active,
+.primary-button:active {
+  transform: translateY(0);
+}
+
+.dashboard-report-button,
+.device-add-button {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* --- Device list --- */
+.device-filter-bar button {
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--pp-muted);
+}
+
+.device-filter-bar input {
+  border-radius: 999px;
+  padding-left: 38px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%234b164c" fill-opacity="0.42" d="M10 2a8 8 0 1 0 4.9 14.3l4.4 4.4 1.4-1.4-4.4-4.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 13px center;
+  background-size: 17px;
+}
+
+.device-warning-banner {
+  border-radius: var(--pp-card-radius);
+}
+
+.device-warning-dot {
+  animation: pp-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes pp-pulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(221, 136, 207, 0.18); }
+  50% { box-shadow: 0 0 0 11px rgba(221, 136, 207, 0.08); }
+}
+
+.device-list-card {
+  color: var(--pp-ink);
+}
+
+.device-list-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    0 22px 50px rgba(75, 22, 76, 0.16) !important;
+}
+
+.device-list-picture {
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.device-list-picture::after {
+  content: "";
+  width: 36px;
+  height: 36px;
+  background: rgba(75, 22, 76, 0.32);
+  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.5 2.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 8a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 2.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2z"/></svg>') center / contain no-repeat;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm1.5 2.6a1.1 1.1 0 1 0 0 2.2 1.1 1.1 0 0 0 0-2.2zM12 8a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm0 2.4a3.6 3.6 0 1 1 0 7.2 3.6 3.6 0 0 1 0-7.2z"/></svg>') center / contain no-repeat;
+}
+
+.device-list-meta p:first-child {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--pp-ink-strong);
+}
+
+.device-list-meta p:nth-child(2) {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--pp-ink);
+}
+
+.device-list-meta p:last-child {
+  font-size: 12.5px;
+  color: var(--pp-muted);
+}
+
+.device-refresh-icon {
+  display: inline-grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--pp-muted);
+  transition: background 0.16s ease, color 0.16s ease;
+}
+
+.device-list-card:hover .device-refresh-icon {
+  background: var(--pp-pink-soft);
+  color: var(--pp-ink);
+}
+
+/* --- Device detail --- */
+.measurement-summary strong {
+  font-size: clamp(28px, 2.4vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--pp-ink-strong);
+}
+
+.measurement-summary > div > p {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--pp-muted);
+}
+
+.measurement-summary > div > span {
+  color: var(--pp-muted);
+  font-size: 13px;
+}
+
+.measurement-summary dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.measurement-summary dl > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.measurement-summary dt {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--pp-muted) !important;
+}
+
+.measurement-summary dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pp-ink) !important;
+}
+
+.measurement-event-list li p {
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.device-recommendation-card p {
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+
+.device-recommendation-card button {
+  border-radius: 999px;
+  font-weight: 700;
+  background: var(--pp-pink-soft) !important;
+  color: var(--pp-ink) !important;
+  box-shadow: none !important;
+}
+
+.device-recommendation-card button:hover {
+  background: rgba(221, 136, 207, 0.3) !important;
+}
+
+/* --- Report page: invisible wrapper buttons must stay invisible --- */
+.report-face-trigger,
+.report-face-trigger:hover,
+.report-face-trigger:active {
+  border-radius: 50%;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.report-appliance-metrics,
+.report-appliance-metrics:hover,
+.report-appliance-metrics:active {
+  padding: 0;
+  border-radius: 12px;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.report-overview-panel,
+.report-overview-panel:hover,
+.report-overview-panel:active {
+  transform: none !important;
+}
+
+.report-appliance-card h2 {
+  color: var(--pp-ink-strong);
+}
+
+.report-metric-box {
+  border: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 6px 16px rgba(75, 22, 76, 0.07);
+}
+
+.report-metric-box--soft {
+  background: rgba(248, 231, 246, 0.85);
+}
+
+.report-metric-box strong {
+  color: var(--pp-ink-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.report-metric-box span {
+  color: var(--pp-muted);
+}
+
+/* --- Section headings inside detail cards --- */
+.device-detail-card h2,
+.appliance-noise-card h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--pp-muted);
+}
+
+/* --- Modals --- */
+.modal-backdrop,
+.device-failure-backdrop,
+.server-failure-backdrop,
+.gpt-consent-backdrop,
+.gpt-withdraw-backdrop,
+.data-delete-backdrop,
+.low-confidence-backdrop {
+  background: rgba(38, 9, 39, 0.45) !important;
+  backdrop-filter: blur(9px) !important;
+  -webkit-backdrop-filter: blur(9px) !important;
+}
+
+.device-failure-modal,
+.server-failure-modal,
+.gpt-consent-modal,
+.gpt-withdraw-modal,
+.data-delete-modal {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    0 40px 110px rgba(38, 9, 39, 0.4) !important;
+}
+
+.device-failure-card,
+.server-failure-card,
+.gpt-consent-card,
+.gpt-withdraw-card,
+.data-delete-card {
+  border-radius: 13px;
+}
+
+.device-failure-primary,
+.server-failure-primary,
+.data-delete-primary {
+  border-radius: 999px;
+}
+
+.device-failure-secondary,
+.server-failure-secondary,
+.data-delete-secondary {
+  border-radius: 999px;
+  color: var(--pp-muted) !important;
+}
+
+/* --- Login --- */
+.login-page {
+  background:
+    radial-gradient(900px 520px at 80% -10%, rgba(221, 136, 207, 0.26), transparent 60%),
+    radial-gradient(800px 600px at 0% 110%, rgba(221, 136, 207, 0.18), transparent 55%),
+    #f6f3f7;
+}
+
+.login-window {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  place-items: center;
+}
+
+.login-stage {
+  padding-top: 0;
+}
+
+.login-card {
+  border: 0;
+  border-radius: 24px;
+  padding: 2.3rem 2.4rem 2rem;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 30px 80px rgba(75, 22, 76, 0.2);
+}
+
+.login-card .eyebrow {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  background: linear-gradient(115deg, var(--pp-ink) 30%, var(--pp-pink));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent !important;
+}
+
+.login-card h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--pp-ink-strong);
+}
+
+.login-card p {
+  color: var(--pp-muted);
+}
+
+.login-card button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+}
+
+.login-create-account a {
+  color: var(--pp-ink);
+}
+
+.login-footer {
+  color: var(--pp-muted);
+}
+
+/* --- Focus & scrollbar --- */
+.dashboard-home-card:focus-visible,
+.device-list-card:focus-visible,
+.device-detail-back:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 0;
+  box-shadow: var(--pp-ring), 0 14px 34px rgba(75, 22, 76, 0.14) !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(75, 22, 76, 0.28);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 22, 76, 0.45);
+  background-clip: padding-box;
+}
