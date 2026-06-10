@@ -1,4 +1,4 @@
-import { escapeHtml } from '../utils/html.js';
+import { bindBackdropDismiss, ensurePopupRoot, setPopupVisible } from '../utils/popup.js';
 
 function getFailureReason(device) {
   if (device?.decibel === '--') {
@@ -48,13 +48,7 @@ export function renderDeviceConnectionFailurePopup() {
 }
 
 export function mountDeviceConnectionFailurePopup({ navigate } = {}) {
-  let root = document.querySelector('#device-connection-failure-popup-root');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'device-connection-failure-popup-root';
-    document.body.appendChild(root);
-  }
-
+  const root = ensurePopupRoot('device-connection-failure-popup-root');
   root.innerHTML = renderDeviceConnectionFailurePopup();
 
   const popup = root.querySelector('#device-connection-failure-popup');
@@ -65,8 +59,7 @@ export function mountDeviceConnectionFailurePopup({ navigate } = {}) {
   const cancelButton = root.querySelector('#device-failure-cancel');
 
   const closePopup = () => {
-    popup?.classList.add('hidden');
-    popup?.setAttribute('aria-hidden', 'true');
+    setPopupVisible(popup, false);
     if (retryButton) retryButton.disabled = false;
     if (retryButton) retryButton.textContent = '재시도';
   };
@@ -74,15 +67,10 @@ export function mountDeviceConnectionFailurePopup({ navigate } = {}) {
   const openPopup = (device) => {
     if (name) name.textContent = getAffectedDeviceName(device);
     if (reason) reason.textContent = getFailureReason(device);
-    popup?.classList.remove('hidden');
-    popup?.setAttribute('aria-hidden', 'false');
+    setPopupVisible(popup, true);
   };
 
-  popup?.addEventListener('click', (event) => {
-    if (event.target === popup) {
-      closePopup();
-    }
-  });
+  bindBackdropDismiss(popup, closePopup);
 
   cancelButton?.addEventListener('click', closePopup);
 

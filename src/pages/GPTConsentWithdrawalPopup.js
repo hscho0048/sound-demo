@@ -1,3 +1,5 @@
+import { bindBackdropDismiss, ensurePopupRoot, setPopupVisible } from '../utils/popup.js';
+
 export function renderGPTConsentWithdrawalPopup() {
   return `
     <div id="gpt-withdraw-popup" class="gpt-withdraw-backdrop hidden" aria-hidden="true">
@@ -30,13 +32,7 @@ export function renderGPTConsentWithdrawalPopup() {
 }
 
 export function mountGPTConsentWithdrawalPopup({ navigate, onConfirm } = {}) {
-  let root = document.querySelector('#gpt-withdraw-popup-root');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'gpt-withdraw-popup-root';
-    document.body.appendChild(root);
-  }
-
+  const root = ensurePopupRoot('gpt-withdraw-popup-root');
   root.innerHTML = renderGPTConsentWithdrawalPopup();
 
   const popup = root.querySelector('#gpt-withdraw-popup');
@@ -46,24 +42,18 @@ export function mountGPTConsentWithdrawalPopup({ navigate, onConfirm } = {}) {
   const confirmButton = root.querySelector('#gpt-withdraw-confirm');
 
   const closePopup = () => {
-    popup?.classList.add('hidden');
-    popup?.setAttribute('aria-hidden', 'true');
+    setPopupVisible(popup, false);
     if (feedback) feedback.textContent = '';
     if (confirmButton) confirmButton.disabled = false;
     if (confirmButton) confirmButton.textContent = '동의 철회';
   };
 
   const openPopup = () => {
-    popup?.classList.remove('hidden');
-    popup?.setAttribute('aria-hidden', 'false');
+    setPopupVisible(popup, true);
     if (feedback) feedback.textContent = '';
   };
 
-  popup?.addEventListener('click', (event) => {
-    if (event.target === popup) {
-      closePopup();
-    }
-  });
+  bindBackdropDismiss(popup, closePopup);
 
   reportLink?.addEventListener('click', (event) => {
     event.preventDefault();

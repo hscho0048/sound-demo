@@ -1,3 +1,5 @@
+import { bindBackdropDismiss, setPopupVisible } from '../utils/popup.js';
+
 export function renderGptDetailReportPopUp() {
   return `
     <div id="gpt-report-consent-popup" class="gpt-consent-backdrop hidden" aria-hidden="true">
@@ -41,8 +43,7 @@ export function mountGptDetailReportPopUp({ onAgree }) {
   const cancelButton = document.querySelector('#gpt-consent-cancel');
 
   const closePopup = () => {
-    popup?.classList.add('hidden');
-    popup?.setAttribute('aria-hidden', 'true');
+    setPopupVisible(popup, false);
     if (feedback) feedback.textContent = '';
     if (checkbox) checkbox.checked = false;
     if (agreeButton) agreeButton.disabled = false;
@@ -50,16 +51,11 @@ export function mountGptDetailReportPopUp({ onAgree }) {
   };
 
   const openPopup = () => {
-    popup?.classList.remove('hidden');
-    popup?.setAttribute('aria-hidden', 'false');
+    setPopupVisible(popup, true);
     if (feedback) feedback.textContent = '';
   };
 
-  popup?.addEventListener('click', (event) => {
-    if (event.target === popup) {
-      closePopup();
-    }
-  });
+  bindBackdropDismiss(popup, closePopup);
 
   cancelButton?.addEventListener('click', closePopup);
 

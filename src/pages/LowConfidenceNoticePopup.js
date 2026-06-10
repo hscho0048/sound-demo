@@ -1,3 +1,5 @@
+import { bindBackdropDismiss, ensurePopupRoot, setPopupVisible } from '../utils/popup.js';
+
 function formatModelLabel(modelLabel) {
   if (modelLabel === 'vacuum_cleaner') {
     return '청소기';
@@ -43,13 +45,7 @@ export function renderLowConfidenceNoticePopup() {
 }
 
 export function mountLowConfidenceNoticePopup({ navigate } = {}) {
-  let root = document.querySelector('#low-confidence-popup-root');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'low-confidence-popup-root';
-    document.body.appendChild(root);
-  }
-
+  const root = ensurePopupRoot('low-confidence-popup-root');
   root.innerHTML = renderLowConfidenceNoticePopup();
 
   const popup = root.querySelector('#low-confidence-popup');
@@ -61,8 +57,7 @@ export function mountLowConfidenceNoticePopup({ navigate } = {}) {
   const closeButton = root.querySelector('#low-confidence-close');
 
   const closePopup = () => {
-    popup?.classList.add('hidden');
-    popup?.setAttribute('aria-hidden', 'true');
+    setPopupVisible(popup, false);
   };
 
   const openPopup = ({ modelLabel, confidence, thresholdValue } = {}) => {
@@ -75,15 +70,10 @@ export function mountLowConfidenceNoticePopup({ navigate } = {}) {
 
     metricCard?.classList.toggle('is-below-threshold', confidenceNumber < thresholdNumber);
 
-    popup?.classList.remove('hidden');
-    popup?.setAttribute('aria-hidden', 'false');
+    setPopupVisible(popup, true);
   };
 
-  popup?.addEventListener('click', (event) => {
-    if (event.target === popup) {
-      closePopup();
-    }
-  });
+  bindBackdropDismiss(popup, closePopup);
 
   closeButton?.addEventListener('click', closePopup);
 

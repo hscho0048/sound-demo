@@ -1,11 +1,5 @@
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
+import { escapeHtml } from '../utils/html.js';
+import { bindBackdropDismiss, ensurePopupRoot, setPopupVisible } from '../utils/popup.js';
 
 function renderServerFailureLine(label, value) {
   return `<span class="server-failure-label">${escapeHtml(label)}</span><span class="server-failure-value">${escapeHtml(value)}</span>`;
@@ -37,13 +31,7 @@ export function renderServerConnectionFailurePopup() {
 }
 
 export function mountServerConnectionFailurePopup({ navigate } = {}) {
-  let root = document.querySelector('#server-connection-failure-popup-root');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'server-connection-failure-popup-root';
-    document.body.appendChild(root);
-  }
-
+  const root = ensurePopupRoot('server-connection-failure-popup-root');
   root.innerHTML = renderServerConnectionFailurePopup();
 
   const popup = root.querySelector('#server-connection-failure-popup');
@@ -54,8 +42,7 @@ export function mountServerConnectionFailurePopup({ navigate } = {}) {
   const statusButton = root.querySelector('#server-failure-status');
 
   const closePopup = () => {
-    popup?.classList.add('hidden');
-    popup?.setAttribute('aria-hidden', 'true');
+    setPopupVisible(popup, false);
     if (retryButton) retryButton.disabled = false;
     if (retryButton) retryButton.textContent = '지금 다시 시도';
   };
@@ -69,15 +56,10 @@ export function mountServerConnectionFailurePopup({ navigate } = {}) {
       queue.innerHTML = renderServerFailureLine('로컬 재시도 대기열: ', `서명된 payload ${retryQueueCount}건 대기 중`);
     }
 
-    popup?.classList.remove('hidden');
-    popup?.setAttribute('aria-hidden', 'false');
+    setPopupVisible(popup, true);
   };
 
-  popup?.addEventListener('click', (event) => {
-    if (event.target === popup) {
-      closePopup();
-    }
-  });
+  bindBackdropDismiss(popup, closePopup);
 
   retryButton?.addEventListener('click', async () => {
     retryButton.disabled = true;

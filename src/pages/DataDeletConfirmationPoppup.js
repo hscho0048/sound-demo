@@ -1,3 +1,5 @@
+import { bindBackdropDismiss, ensurePopupRoot, setPopupVisible } from '../utils/popup.js';
+
 export function renderDataDeleteConfirmationPopup() {
   return `
     <div id="data-delete-confirmation-popup" class="data-delete-backdrop hidden" aria-hidden="true">
@@ -30,13 +32,7 @@ export function renderDataDeleteConfirmationPopup() {
 }
 
 export function mountDataDeleteConfirmationPopup({ onConfirm } = {}) {
-  let root = document.querySelector('#data-delete-confirmation-popup-root');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'data-delete-confirmation-popup-root';
-    document.body.appendChild(root);
-  }
-
+  const root = ensurePopupRoot('data-delete-confirmation-popup-root');
   root.innerHTML = renderDataDeleteConfirmationPopup();
 
   const popup = root.querySelector('#data-delete-confirmation-popup');
@@ -46,8 +42,7 @@ export function mountDataDeleteConfirmationPopup({ onConfirm } = {}) {
   const cancelButton = root.querySelector('#data-delete-cancel');
 
   const closePopup = () => {
-    popup?.classList.add('hidden');
-    popup?.setAttribute('aria-hidden', 'true');
+    setPopupVisible(popup, false);
     if (input) input.value = '';
     if (feedback) feedback.textContent = '';
     if (confirmButton) confirmButton.disabled = false;
@@ -55,17 +50,12 @@ export function mountDataDeleteConfirmationPopup({ onConfirm } = {}) {
   };
 
   const openPopup = () => {
-    popup?.classList.remove('hidden');
-    popup?.setAttribute('aria-hidden', 'false');
+    setPopupVisible(popup, true);
     if (feedback) feedback.textContent = '';
     input?.focus();
   };
 
-  popup?.addEventListener('click', (event) => {
-    if (event.target === popup) {
-      closePopup();
-    }
-  });
+  bindBackdropDismiss(popup, closePopup);
 
   cancelButton?.addEventListener('click', closePopup);
 

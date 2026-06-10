@@ -1,5 +1,6 @@
 import { fetchReactions } from '../api/reactions.js';
 import { escapeHtml } from '../utils/html.js';
+import { setPopupVisible } from '../utils/popup.js';
 
 let reactionRows = [
   {
@@ -49,6 +50,25 @@ let reactionRows = [
 ];
 
 const tableColumns = ['시간', '반응', '연결 이벤트 ID', '기기', 'dB', '공간'];
+
+const filterFields = [
+  { id: 'reaction-filter-range', label: '기간', options: ['7일', '2주', '한달'] },
+  { id: 'reaction-filter-noise', label: '소음', options: ['모두', '60dB 이상', '60dB 이하'] },
+  { id: 'reaction-filter-room', label: '공간', options: ['모두', '거실', '세탁실', '부엌', '화장실', '방1', '방2', '방3'] },
+  { id: 'reaction-filter-device', label: '기기', options: ['모두', '세탁기', '로봇청소기', '냉장고', '식기세척기', '상태없음'] },
+  { id: 'reaction-filter-reaction', label: '반응', options: ['모두', 'Positive', 'Negative', 'Pending', 'Manual'] }
+];
+
+function filterFieldMarkup({ id, label, options }) {
+  return `
+    <label class="reaction-filter-field">
+      <span>${escapeHtml(label)}</span>
+      <select id="${escapeHtml(id)}">
+        ${options.map((option) => `<option>${escapeHtml(option)}</option>`).join('')}
+      </select>
+    </label>
+  `;
+}
 
 function formatTime(value) {
   const date = value ? new Date(value) : new Date();
@@ -229,56 +249,7 @@ export async function renderReactionHistoryPage() {
           <input id="reaction-search-input" type="search" placeholder="공간, 기기, 라벨 검색" />
         </label>
         <div class="reaction-filter-chips">
-          <label class="reaction-filter-field">
-            <span>기간</span>
-            <select id="reaction-filter-range">
-              <option>7일</option>
-              <option>2주</option>
-              <option>한달</option>
-            </select>
-          </label>
-          <label class="reaction-filter-field">
-            <span>소음</span>
-            <select id="reaction-filter-noise">
-              <option>모두</option>
-              <option>60dB 이상</option>
-              <option>60dB 이하</option>
-            </select>
-          </label>
-          <label class="reaction-filter-field">
-            <span>공간</span>
-            <select id="reaction-filter-room">
-              <option>모두</option>
-              <option>거실</option>
-              <option>세탁실</option>
-              <option>부엌</option>
-              <option>화장실</option>
-              <option>방1</option>
-              <option>방2</option>
-              <option>방3</option>
-            </select>
-          </label>
-          <label class="reaction-filter-field">
-            <span>기기</span>
-            <select id="reaction-filter-device">
-              <option>모두</option>
-              <option>세탁기</option>
-              <option>로봇청소기</option>
-              <option>냉장고</option>
-              <option>식기세척기</option>
-              <option>상태없음</option>
-            </select>
-          </label>
-          <label class="reaction-filter-field">
-            <span>반응</span>
-            <select id="reaction-filter-reaction">
-              <option>모두</option>
-              <option>Positive</option>
-              <option>Negative</option>
-              <option>Pending</option>
-              <option>Manual</option>
-            </select>
-          </label>
+          ${filterFields.map(filterFieldMarkup).join('')}
         </div>
         <p id="reaction-filter-status" class="reaction-filter-status" aria-live="polite"></p>
       </section>
@@ -327,14 +298,11 @@ export function mountReactionHistoryPage() {
   function openModal(row) {
     if (!detailModal || !detailContent) return;
     detailContent.innerHTML = detailMarkup(row);
-    detailModal.classList.remove('hidden');
-    detailModal.setAttribute('aria-hidden', 'false');
+    setPopupVisible(detailModal, true);
   }
 
   function closeModal() {
-    if (!detailModal) return;
-    detailModal.classList.add('hidden');
-    detailModal.setAttribute('aria-hidden', 'true');
+    setPopupVisible(detailModal, false);
   }
 
   function bindRowSelection(rows) {

@@ -33,7 +33,7 @@
 .profile-page,
 .system-status-page {
   padding: var(--settings-suite-pad-y) 0 48px var(--settings-suite-pad-x);
-  background: #f3f4f6;
+  background: var(--surface-muted);
 }
 
 .settings-page-header,
@@ -127,8 +127,8 @@
   min-height: 46px;
   padding: 0 16px;
   border: none;
-  background: #f3f4f6;
-  color: #383838;
+  background: var(--surface-muted);
+  color: var(--ink);
   border-radius: 18px;
   font-size: 15px;
   line-height: 1.1;
@@ -139,14 +139,14 @@
 .settings-tab.is-active,
 .profile-category-panel .settings-tab.is-active,
 .system-category-panel .settings-tab.is-active {
-  background: #BDC0C0;
+  background: var(--control-bg);
 }
 
 .settings-tab:hover,
 .profile-category-panel .settings-tab:hover,
 .system-category-panel .settings-tab:hover {
-  background: #f3f4f6;
-  color: #383838;
+  background: var(--surface-muted);
+  color: var(--ink);
 }
 
 .settings-card,
@@ -259,10 +259,7 @@
   .profile-layout {
     grid-template-areas:
       "tabs identity"
-      "tabs account"
-      "tabs security"
-      "tabs actions"
-      "tabs notice";
+      "tabs summary";
   }
 
   .system-status-layout {
@@ -276,7 +273,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .settings-page,
   .profile-page,
   .system-status-page {
@@ -299,11 +296,40 @@
     grid-template-columns: 1fr;
   }
 
+  .settings-layout {
+    grid-template-areas:
+      "tabs"
+      "noise"
+      "sensitivity"
+      "avoidance"
+      "consent"
+      "data"
+      "save";
+  }
+
+  .profile-layout {
+    grid-template-areas:
+      "tabs"
+      "identity"
+      "summary";
+  }
+
+  .system-status-shell {
+    grid-template-areas:
+      "tabs"
+      "status";
+  }
+
+  /* The desktop layout floats the tab panel into the header row (absolute,
+     top: -98px); in the stacked single-column layout it must flow in-grid
+     again or it overlaps the page title. */
   .settings-category-panel,
   .profile-category-panel,
   .system-category-panel {
+    position: static;
     min-height: auto;
     height: auto;
+    justify-content: flex-start;
   }
 
   .profile-identity-card {

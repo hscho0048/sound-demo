@@ -904,10 +904,7 @@
     grid-template-areas:
       "tabs"
       "identity"
-      "account"
-      "security"
-      "actions"
-      "notice";
+      "summary";
   }
 
   .system-status-shell {
@@ -1261,8 +1258,8 @@
   }
 
   .account-page {
-    background: #f3f4f6;
-    color: #383838;
+    background: var(--surface-muted);
+    color: var(--ink);
   }
 
   .login-window,
