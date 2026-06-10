@@ -16,20 +16,20 @@ let gptConsentPopupCleanup = null;
 
 export function renderSettingsPage() {
   return `
-    <section class="page settings-page" aria-label="Settings Screen">
+    <section class="page settings-page" aria-label="설정 화면">
       <header class="settings-page-header">
-        <h1>Settings</h1>
-        <p>Configure behavior, privacy, data retention, and account preferences.</p>
+        <h1>설정</h1>
+        <p>동작, 개인정보, 데이터 보관, 계정 환경을 설정합니다.</p>
       </header>
 
       <div class="settings-layout">
-        <aside class="settings-category-panel" aria-label="Settings categories">
+        <aside class="settings-category-panel" aria-label="설정 카테고리">
           ${renderSettingsTabs('general')}
         </aside>
 
         <section class="settings-card settings-noise-card">
-          <h2>Noise threshold</h2>
-          <p>Set general trigger threshold for relative dB detection. Too low may create frequent inference or false events.</p>
+          <h2>소음 임계값</h2>
+          <p>상대 dB 감지의 기본 트리거 기준을 설정합니다. 너무 낮으면 추론 또는 오탐이 자주 발생할 수 있습니다.</p>
           <div class="settings-range-row">
             <input id="noise-threshold-range" type="range" min="45" max="80" value="${defaultSettings.noiseThreshold}" />
             <output id="noise-threshold-value" for="noise-threshold-range">${defaultSettings.noiseThreshold} dB</output>
@@ -37,12 +37,12 @@ export function renderSettingsPage() {
         </section>
 
         <section class="settings-card settings-sensitivity-card">
-          <h2>Sensitivity and confidence</h2>
-          <p>Tune sensitivity and minimum model confidence before event creation.</p>
+          <h2>민감도 및 신뢰도</h2>
+          <p>이벤트 생성 전에 민감도와 최소 모델 신뢰도 기준을 조정합니다.</p>
           <div class="settings-dual-ranges">
             <div class="settings-range-row">
               <input id="sensitivity-range" type="range" min="0" max="100" value="${defaultSettings.sensitivity}" />
-              <output id="sensitivity-value" for="sensitivity-range">High</output>
+              <output id="sensitivity-value" for="sensitivity-range">높음</output>
             </div>
             <div class="settings-range-row">
               <input id="confidence-range" type="range" min="50" max="95" value="${defaultSettings.confidence}" />
@@ -52,43 +52,43 @@ export function renderSettingsPage() {
         </section>
 
         <section class="settings-card settings-avoidance-card">
-          <h2>Robot vacuum avoidance</h2>
-          <p>Configure simulated robot vacuum avoidance when mapped service_label and room_id conditions are met.</p>
+          <h2>로봇청소기 회피</h2>
+          <p>매핑된 service_label 및 room_id 조건이 충족될 때 시뮬레이션 기반 로봇청소기 회피를 설정합니다.</p>
           <label class="settings-switch-row">
             <input id="avoidance-toggle" type="checkbox" ${defaultSettings.avoidanceEnabled ? 'checked' : ''} />
             <span class="settings-switch" aria-hidden="true"></span>
-            <strong>Enable simulation overlay</strong>
+            <strong>시뮬레이션 오버레이 사용</strong>
           </label>
         </section>
 
         <section class="settings-card settings-consent-card">
-          <h2>GPT detailed report consent</h2>
-          <p>Manage consent and withdrawal. Withdrawal does not delete already generated reports unless separately deleted.</p>
+          <h2>GPT 상세 리포트 동의</h2>
+          <p>동의 및 철회를 관리합니다. 철회하더라도 이미 생성된 리포트는 별도 삭제 전까지 유지됩니다.</p>
           <div class="settings-consent-row">
             <label class="settings-switch-row settings-switch-row--compact">
               <input id="gpt-consent-toggle" type="checkbox" checked />
               <span class="settings-switch" aria-hidden="true"></span>
-              <small>Consent granted for summarized data only</small>
+              <small>요약 데이터 사용에만 동의됨</small>
             </label>
-            <button id="withdraw-gpt-consent-button" type="button" class="settings-outline-button">Manage</button>
+            <button id="withdraw-gpt-consent-button" type="button" class="settings-outline-button">관리</button>
           </div>
           <span id="gpt-consent-status" aria-live="polite"></span>
         </section>
 
         <section class="settings-card settings-data-card">
-          <h2>Data retention and deletion</h2>
-          <p>Set event/report retention policy and request deletion. Destructive actions require confirmation.</p>
-          <div class="settings-button-row">
-            <button type="button" class="settings-outline-button">Retention: 90 days</button>
-            <button id="delete-data-button" type="button" class="settings-outline-button">Delete data...</button>
+          <h2>데이터 보관 및 삭제</h2>
+          <p>이벤트/리포트 보관 기간을 설정하고 삭제를 요청할 수 있습니다. 파괴적 작업은 확인이 필요합니다.</p>
+          <div class="settings-data-controls">
+            <span class="settings-static-note">보관 기간: 90일</span>
+            <button id="delete-data-button" type="button" class="settings-outline-button">데이터 삭제</button>
           </div>
           <span id="data-deletion-status" aria-live="polite"></span>
         </section>
 
         <section class="settings-card settings-save-card">
-          <h2>설정 저장하기</h2>
-          <button id="settings-save-button" type="button" class="settings-save-button">Save changes</button>
-          <button id="settings-reset-button" type="button" class="settings-reset-button">Reset defaults</button>
+          <h2>설정 저장</h2>
+          <button id="settings-save-button" type="button" class="settings-save-button">변경사항 저장</button>
+          <button id="settings-reset-button" type="button" class="settings-reset-button">기본값 복원</button>
           <span id="settings-save-status" aria-live="polite"></span>
         </section>
       </div>
@@ -101,6 +101,7 @@ export function mountSettingsPage({ navigate } = {}) {
   gptConsentPopupCleanup?.();
   dataDeletePopupCleanup = null;
   gptConsentPopupCleanup = null;
+
   const noiseRange = document.querySelector('#noise-threshold-range');
   const noiseValue = document.querySelector('#noise-threshold-value');
   const sensitivityRange = document.querySelector('#sensitivity-range');
@@ -112,33 +113,35 @@ export function mountSettingsPage({ navigate } = {}) {
   const deleteStatus = document.querySelector('#data-deletion-status');
   const consentStatus = document.querySelector('#gpt-consent-status');
   const consentToggle = document.querySelector('#gpt-consent-toggle');
+
   const dataDeletePopup = mountDataDeleteConfirmationPopup({
     onConfirm: async (confirmText) => {
-      if (deleteStatus) deleteStatus.textContent = 'Submitting deletion request...';
+      if (deleteStatus) deleteStatus.textContent = '삭제 요청 제출 중...';
       try {
         const response = await createDataDeletionRequest({
           scope: 'ALL',
           confirmText,
           metadata: { requestedFrom: 'tauri-settings' }
         });
-        if (deleteStatus) deleteStatus.textContent = `Deletion request ${response.status}.`;
+        if (deleteStatus) deleteStatus.textContent = `삭제 요청 ${response.status}.`;
       } catch (error) {
-        if (deleteStatus) deleteStatus.textContent = `Deletion request failed: ${error.message}`;
+        if (deleteStatus) deleteStatus.textContent = `삭제 요청 실패: ${error.message}`;
         throw error;
       }
     }
   });
   dataDeletePopupCleanup = dataDeletePopup.cleanup;
+
   const gptConsentPopup = mountGPTConsentWithdrawalPopup({
     navigate,
     onConfirm: async () => {
-      if (consentStatus) consentStatus.textContent = 'Withdrawing consent...';
+      if (consentStatus) consentStatus.textContent = '동의 철회 중...';
       try {
         const response = await withdrawGptConsent({ reason: 'USER_WITHDRAWAL' });
         if (consentToggle) consentToggle.checked = Boolean(response.granted);
-        if (consentStatus) consentStatus.textContent = 'GPT detailed report consent withdrawn.';
+        if (consentStatus) consentStatus.textContent = 'GPT 상세 리포트 동의를 철회했습니다.';
       } catch (error) {
-        if (consentStatus) consentStatus.textContent = `Consent update failed: ${error.message}`;
+        if (consentStatus) consentStatus.textContent = `동의 업데이트 실패: ${error.message}`;
         throw error;
       }
     }
@@ -150,7 +153,7 @@ export function mountSettingsPage({ navigate } = {}) {
 
     const sensitivity = Number(sensitivityRange?.value ?? defaultSettings.sensitivity);
     if (sensitivityValue) {
-      sensitivityValue.textContent = sensitivity >= 67 ? 'High' : sensitivity >= 34 ? 'Medium' : 'Low';
+      sensitivityValue.textContent = sensitivity >= 67 ? '높음' : sensitivity >= 34 ? '보통' : '낮음';
     }
 
     if (confidenceValue) {
@@ -182,7 +185,7 @@ export function mountSettingsPage({ navigate } = {}) {
   bindSettingsTabs(navigate);
 
   document.querySelector('#settings-save-button')?.addEventListener('click', () => {
-    if (saveStatus) saveStatus.textContent = 'Changes saved locally.';
+    if (saveStatus) saveStatus.textContent = '변경사항이 로컬에 저장되었습니다.';
   });
 
   document.querySelector('#settings-reset-button')?.addEventListener('click', () => {
@@ -191,7 +194,7 @@ export function mountSettingsPage({ navigate } = {}) {
     if (confidenceRange) confidenceRange.value = String(defaultSettings.confidence);
     if (avoidanceToggle) avoidanceToggle.checked = defaultSettings.avoidanceEnabled;
     renderValues();
-    if (saveStatus) saveStatus.textContent = 'Defaults restored.';
+    if (saveStatus) saveStatus.textContent = '기본값으로 복원되었습니다.';
   });
 
   document.querySelector('#withdraw-gpt-consent-button')?.addEventListener('click', () => {
@@ -199,7 +202,7 @@ export function mountSettingsPage({ navigate } = {}) {
     gptConsentPopup.openPopup();
   });
 
-  document.querySelector('#delete-data-button')?.addEventListener('click', async () => {
+  document.querySelector('#delete-data-button')?.addEventListener('click', () => {
     if (deleteStatus) deleteStatus.textContent = '';
     dataDeletePopup.openPopup();
   });

@@ -104,7 +104,9 @@
   padding: 20px;
   gap: 20px;
   align-self: start;
+  border: none;
   border-radius: 10px;
+  background: #ffffff;
 }
 
 .settings-tab,
@@ -114,9 +116,25 @@
   height: 48px;
   min-height: 48px;
   padding: 0 18px;
+  border: none;
+  background: #f3f4f6;
+  color: #383838;
   font-size: 16px;
   line-height: 1.1;
   white-space: nowrap;
+}
+
+.settings-tab.is-active,
+.profile-category-panel .settings-tab.is-active,
+.system-category-panel .settings-tab.is-active {
+  background: #BDC0C0;
+}
+
+.settings-tab:hover,
+.profile-category-panel .settings-tab:hover,
+.system-category-panel .settings-tab:hover {
+  background: #f3f4f6;
+  color: #383838;
 }
 
 .settings-card,
@@ -133,6 +151,8 @@
 .profile-identity-card,
 .profile-account-card {
   min-height: 158px;
+  border: none;
+  background: #ffffff;
 }
 
 .profile-security-card,

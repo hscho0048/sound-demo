@@ -1,9 +1,9 @@
 import { escapeHtml } from '../utils/html.js';
 
 const SETTINGS_TABS = [
-  { id: 'general', label: 'General', route: '#/settings' },
-  { id: 'profile', label: 'Profile', route: '#/profile' },
-  { id: 'system', label: 'System Status', route: '#/reports/system-status' }
+  { id: 'general', label: '환경설정', route: '#/settings' },
+  { id: 'profile', label: '프로필', route: '#/profile' },
+  { id: 'system', label: '시스템 상태', route: '#/reports/system-status' }
 ];
 
 export function renderSettingsTabs(activeId) {
