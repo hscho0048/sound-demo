@@ -76,52 +76,64 @@
 }
 
 .settings-layout {
-  grid-template-columns: var(--settings-suite-tabs) repeat(2, minmax(0, 1fr));
+  position: relative;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-areas:
-    "tabs noise sensitivity"
-    "tabs avoidance consent"
-    "tabs data save";
+    "noise sensitivity"
+    "avoidance consent"
+    "data save";
 }
 
 .profile-layout {
-  grid-template-columns: var(--settings-suite-tabs) minmax(0, 1fr) 360px;
+  position: relative;
+  grid-template-columns: 280px minmax(520px, 1.45fr);
   grid-template-areas:
-    "tabs identity account"
-    "tabs security actions"
-    "tabs notice notice";
+    "identity summary";
 }
 
 .system-status-shell {
-  grid-template-columns: var(--settings-suite-tabs) minmax(0, 1fr);
-  grid-template-areas: "tabs status";
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "status";
 }
 
 .settings-category-panel,
 .profile-category-panel,
 .system-category-panel {
+  position: absolute;
+  top: -98px;
+  right: 0;
   width: auto;
-  min-height: 542px;
-  padding: 20px;
-  gap: 20px;
+  min-height: 0;
+  padding: 0;
+  gap: 10px;
   align-self: start;
   border: none;
-  border-radius: 10px;
-  background: #ffffff;
+  border-radius: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  justify-self: end;
+  z-index: 2;
 }
 
 .settings-tab,
 .profile-category-panel .settings-tab,
 .system-category-panel .settings-tab {
-  width: 100%;
-  height: 48px;
-  min-height: 48px;
-  padding: 0 18px;
+  width: 132px;
+  height: 46px;
+  min-height: 46px;
+  padding: 0 16px;
   border: none;
   background: #f3f4f6;
   color: #383838;
-  font-size: 16px;
+  border-radius: 18px;
+  font-size: 15px;
   line-height: 1.1;
   white-space: nowrap;
+  text-align: center;
 }
 
 .settings-tab.is-active,
@@ -155,23 +167,26 @@
   background: #ffffff;
 }
 
-.profile-security-card,
-.profile-actions-card {
-  min-height: 122px;
-}
-
-.profile-notice-card {
-  min-height: 64px;
+.profile-summary-card {
+  min-height: 420px;
+  border: none;
+  background: #ffffff;
 }
 
 .profile-identity-card {
-  grid-template-columns: 118px minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: 1fr;
+  gap: 34px;
 }
 
 .profile-photo-placeholder {
-  width: 112px;
-  height: 112px;
+  width: 184px;
+  height: 184px;
+  border-radius: 50%;
+  background: #e5e7eb;
+}
+
+.profile-identity-card {
+  background: transparent !important;
 }
 
 .system-status-layout {
