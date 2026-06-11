@@ -65,15 +65,21 @@ function deviceCard(device) {
   const failed = isDeviceConnectionFailed(device);
   const room = getDisplayRoom(device.room);
   const status = getDeviceStatus(device);
+  const statusClass =
+    status === '주의' || status === '二쇱쓽'
+      ? 'is-warning'
+      : status === '연결 필요' || status === '?곌껐 ?꾩슂'
+        ? 'is-connection'
+        : 'is-stable';
   return `
     <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.deviceName)} (${escapeHtml(room)}, ${escapeHtml(status)}) 기기 상세" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
       <div class="device-list-picture" aria-hidden="true"></div>
       <div class="device-list-meta">
-        <p>${escapeHtml(device.deviceName)}</p>
+        <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
         <p>${escapeHtml(device.decibel)} dB</p>
         <p>${escapeHtml(device.time)}</p>
       </div>
-      <span class="device-refresh-icon" aria-hidden="true">&#8635;</span>
+      <span class="device-detail-icon" aria-hidden="true">&#8594;</span>
     </a>
   `;
 }
@@ -91,7 +97,7 @@ export async function renderDeviceListPage() {
           <h1>기기</h1>
           <p>총 ${deviceRows.length}대 - ${onlineCount}대 연결됨 - ${failedCount}대 불안정</p>
         </div>
-        <button class="device-add-button" type="button">+</button>
+        <button class="device-add-button" type="button">기기 추가</button>
       </header>
 
       <section class="device-filter-bar" aria-label="기기 필터">
