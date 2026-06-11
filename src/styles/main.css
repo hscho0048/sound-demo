@@ -96,14 +96,14 @@ button.secondary, .secondary { background: #e2e8f0; color: #0f172a; box-shadow: 
 .account-window { min-height: calc(100vh - 1.3rem); border: 1px solid #c7d3e1; background: var(--surface-muted); }
 .account-titlebar { height: 3.25rem; display: flex; align-items: center; gap: 0.7rem; padding: 0 2rem; border-bottom: 2px solid #cbd5e1; background: #e5e9ee; }
 .window-dot--active { background: #bfdbfe; border-color: #bfdbfe; }
-.account-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.35rem; min-height: 4.25rem; padding: 0 1.8rem; border-bottom: 1px solid #cbd5e1; background: #ffffff; }
+.account-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.35rem; min-height: 4.25rem; padding: 0 1.8rem; border-bottom: 1px solid #cbd5e1; background: transparent; }
 .account-header h1 { margin: 0; color: var(--ink); font-size: 1.55rem; line-height: 1.1; }
 .account-header a { color: var(--ink); }
 .account-header p { align-self: end; margin: 0 0 0.75rem; color: var(--ink); font-size: 0.9rem; }
-.account-back-button { display: grid; place-items: center; width: 2.9rem; height: 2.35rem; padding: 0.35rem; border: none; border-radius: 0.35rem; font-size: 1.2rem; font-weight: 900; overflow: hidden; background: #ffffff; box-shadow: 0 6px 14px rgba(56, 56, 56, 0.1); }
+.account-back-button { display: grid; place-items: center; width: 2.9rem; height: 2.35rem; padding: 0.35rem; border: none; border-radius: 0.35rem; font-size: 1.2rem; font-weight: 900; overflow: hidden; background: var(--surface-muted); box-shadow: 0 6px 14px rgba(56, 56, 56, 0.1); }
 .account-back-button img { display: block; width: 0.8rem; height: 0.8rem; object-fit: contain; }
 .account-content { display: grid; grid-template-columns: minmax(22rem, 36rem); grid-template-areas: "form" "validation"; justify-content: center; align-content: start; gap: 0.75rem; padding: 2.2rem 2rem; }
-.account-card { grid-area: form; padding: 1rem 1.85rem 0.45rem; border: none; border-radius: 0.5rem; background: #ffffff; box-shadow: 0 10px 24px rgba(56, 56, 56, 0.1); }
+.account-card { grid-area: form; padding: 1rem 1.85rem 0.45rem; border: none; border-radius: 0.5rem; background: #ffffff; box-shadow: 0 18px 42px rgba(17, 24, 39, 0.08); }
 .account-card h2 { margin: 0 0 0.45rem; color: var(--ink); font-size: 1.55rem; }
 .account-info-box { display: grid; gap: 0.15rem; margin-bottom: 0.75rem; padding: 0.35rem 0.55rem; border: none; border-radius: 0.35rem; color: var(--ink); background: var(--surface-muted); }
 .account-info-box span { font-size: 0.68rem; color: var(--ink); }
@@ -111,17 +111,9 @@ button.secondary, .secondary { background: #e2e8f0; color: #0f172a; box-shadow: 
 .account-card input { height: 2.25rem; border-color: #cbd5e1; border-radius: 0.35rem; color: var(--ink); background: var(--surface-muted); font-weight: 600; }
 .account-card input::placeholder { color: #737373; font-weight: 600; }
 .account-inline { display: grid; grid-template-columns: 1fr 10.2rem; gap: 1rem; }
-.account-inline button { position: relative; display: grid; place-items: center; height: 2.25rem; padding: 0; border: none; border-radius: 0.35rem; overflow: hidden; background: var(--control-bg); color: var(--ink); box-shadow: none; font-size: 0.9rem; line-height: 1; text-align: center; }
-.account-inline button::after,
-.account-submit::after { content: ""; position: absolute; top: -130%; left: -70%; width: 42%; height: 360%; background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.46) 50%, transparent 100%); transform: translateX(-180%) rotate(32deg); pointer-events: none; }
+.account-inline button { position: relative; display: grid; place-items: center; height: 2.25rem; padding: 0; border: none; border-radius: 0.35rem; overflow: hidden; background: #f3f4f6; color: var(--ink); box-shadow: none; font-size: 0.9rem; line-height: 1; text-align: center; transition: transform 180ms ease, background-color 180ms ease; }
 .account-inline button:hover,
-.account-submit:hover { background: var(--control-bg); color: var(--ink); }
-.account-inline button:hover::after,
-.account-submit:hover::after { animation: account-button-shine 2200ms ease-out 1; }
-@keyframes account-button-shine {
-  from { transform: translateX(-180%) rotate(32deg); }
-  to { transform: translateX(620%) rotate(32deg); }
-}
+.account-submit:hover { background: #eef0f2; color: var(--ink); transform: translateY(-2px); }
 .account-availability { display: inline-flex; align-items: center; gap: 0.3rem; width: 14rem; margin: 0.45rem 0 0; padding: 0.2rem 0.45rem; border: none; border-radius: 0.35rem; color: #64748b; font-size: 0.7rem; }
 .account-availability span { width: 0.7rem; height: 0.7rem; border-radius: 50%; background: #b6c4d6; }
 .account-availability em { font-style: normal; }
@@ -133,7 +125,7 @@ button.secondary, .secondary { background: #e2e8f0; color: #0f172a; box-shadow: 
 .account-consent { height: 2.25rem; display: flex !important; align-items: center; gap: 0.6rem !important; padding: 0 0.65rem; border: 1px solid #cbd5e1; border-radius: 0.35rem; color: var(--ink) !important; font-size: 0.75rem; font-weight: 500 !important; }
 .account-consent input { width: 1rem; height: 1rem; padding: 0; }
 .account-required { margin: 0.7rem 0 0.75rem; color: #aa1239; text-align: right; font-weight: 600; }
-.account-submit { position: relative; width: 100%; height: 2.65rem; border: none; border-radius: 0.35rem; overflow: hidden; background: var(--control-bg); color: var(--ink); box-shadow: none; font-size: 0.9rem; }
+.account-submit { position: relative; width: 100%; height: 2.65rem; border: none; border-radius: 0.35rem; overflow: hidden; background: #f3f4f6; color: var(--ink); box-shadow: none; font-size: 0.9rem; transition: transform 180ms ease, background-color 180ms ease; }
 .account-signin-note { margin: 0.35rem 0 0; text-align: center; color: var(--ink); }
 .account-guidance { grid-area: guide; min-height: 16.4rem; padding: 1.35rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; background: #fff; }
 .account-guidance h2 { margin: 0 0 1.4rem; font-size: 1.05rem; }
