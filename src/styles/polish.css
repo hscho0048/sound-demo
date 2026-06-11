@@ -199,6 +199,9 @@ body,
 }
 
 /* --- Page-specific header placement --- */
+/* ≤640px(APK)은 mobile-apk.css의 풀블리드 배너 헤더가 담당하므로 데스크톱에만 적용 */
+@media (min-width: 641px) {
+
 .dashboard-household-header,
 .device-list-header {
   width: min(100%, var(--ui-content-max));
@@ -305,27 +308,6 @@ body,
   align-self: start;
 }
 
-/* With only an h1 + p in these headers, the :last-child -> actions rule
-   sends the subtitle to the side column and collapses the title at phone
-   widths; stack the header instead. */
-@media (max-width: 640px) {
-  .settings-page-header,
-  .profile-page-header,
-  .system-page-header {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "title"
-      "copy"
-      "actions";
-  }
-
-  .settings-page-header > :last-child,
-  .profile-page-header > :last-child,
-  .system-page-header > :last-child {
-    justify-self: start;
-  }
-}
-
 .basic-report-page,
 .reaction-history-page,
 .gpt-detail-page,
@@ -334,6 +316,8 @@ body,
 .system-status-page {
   padding-top: 36px;
 }
+
+} /* end @media (min-width: 641px) — page-specific header placement */
 
 /* --- Cards: consistent radius, hairline + layered depth --- */
 .dashboard-info-card,
@@ -368,6 +352,10 @@ body,
 }
 
 /* --- Dashboard hierarchy --- */
+/* ≤640px(APK) 대시보드 카드 타이포는 mobile-apk.css가 담당
+   (h1 nowrap/ellipsis가 모바일에서 DAILY REPORT를 자르고 50px Stable이 카드를 넘침) */
+@media (min-width: 641px) {
+
 .dashboard-home-card {
   cursor: pointer;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -500,6 +488,8 @@ body,
 .dashboard-reaction-card:hover {
   transform: translateY(-2px);
 }
+
+} /* end @media (min-width: 641px) — dashboard hierarchy */
 
 /* --- Buttons: pills + lift --- */
 button,
@@ -1041,6 +1031,9 @@ button:active,
 }
 
 /* --- Device list --- */
+/* ≤640px(APK) 카드 레이아웃은 mobile-apk.css가 담당 (picture/refresh 숨김 등) */
+@media (min-width: 641px) {
+
 .device-filter-bar button {
   border-radius: 999px;
   font-weight: 600;
@@ -1210,7 +1203,12 @@ button:active,
   color: var(--ink);
 }
 
+} /* end @media (min-width: 641px) — device list */
+
 /* --- Device detail --- */
+/* ≤640px(APK)은 mobile-apk.css의 1열 스택 레이아웃이 담당 */
+@media (min-width: 641px) {
+
 .device-detail-page {
   display: grid;
   grid-template-rows: auto auto;
@@ -1584,6 +1582,8 @@ button:active,
   background: #bdc0c0 !important;
 }
 
+} /* end @media (min-width: 641px) — device detail */
+
 /* --- Report page: invisible wrapper buttons must stay invisible --- */
 .report-face-trigger,
 .report-face-trigger:hover,
@@ -1614,34 +1614,37 @@ button:active,
   color: var(--pp-ink-strong);
 }
 
-.report-metric-box {
-  border: 0;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.8);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 6px 16px rgba(75, 22, 76, 0.07);
-}
+/* ≤640px(APK) 메트릭은 mobile-apk.css의 텍스트형 표시가 담당 */
+@media (min-width: 641px) {
+  .report-metric-box {
+    border: 0;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 6px 16px rgba(75, 22, 76, 0.07);
+  }
 
-.report-metric-box--soft {
-  background: rgba(248, 231, 246, 0.85);
-}
+  .report-metric-box--soft {
+    background: rgba(248, 231, 246, 0.85);
+  }
 
-.report-metric-box strong {
-  color: var(--pp-ink-strong);
-  font-variant-numeric: tabular-nums;
-}
+  .report-metric-box strong {
+    color: var(--pp-ink-strong);
+    font-variant-numeric: tabular-nums;
+  }
 
-.report-metric-box span {
-  color: var(--pp-muted);
-}
+  .report-metric-box span {
+    color: var(--pp-muted);
+  }
 
-/* --- Section headings inside detail cards --- */
-.device-detail-card h2,
-.appliance-noise-card h2 {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #111827;
+  /* --- Section headings inside detail cards --- */
+  .device-detail-card h2,
+  .appliance-noise-card h2 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #111827;
+  }
 }
 
 /* --- Modals --- */
