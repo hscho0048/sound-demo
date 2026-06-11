@@ -612,6 +612,47 @@ button:active,
     0 3px 8px rgba(17, 24, 39, 0.06);
 }
 
+.report-period-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.report-period-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: 160px;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.report-period-menu[hidden] {
+  display: none;
+}
+
+.report-period-menu button {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--surface-muted);
+  color: var(--ink);
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: none !important;
+}
+
+.report-period-menu button:hover {
+  background: #bdc0c0;
+}
+
 .basic-report-page .report-appliance-grid {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
   gap: var(--ui-gap);
@@ -828,6 +869,30 @@ button:active,
   border: 0;
   background: #f3f4f6;
   color: #383838;
+}
+
+.basic-report-page .low-noise-detail-card .detail-card-icon {
+  background: transparent;
+}
+
+.basic-report-page .low-noise-detail-card .detail-card-icon::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 28px;
+  background: url("/assets/icons/switch-transfer-icon.png") center / contain no-repeat;
+}
+
+.basic-report-page .gpt-report-card .detail-card-icon {
+  background: #ffffff;
+}
+
+.basic-report-page .gpt-report-card .detail-card-icon::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 28px;
+  background: url("https://i.namu.wiki/i/9yf4h0kNu7QBf_SABY4CQJ8IFmv9Kby2YRVNQADCntaBn8kQyiAMcGNT9JgMcI2Ec2NCqTTIx6eg9TZK7h1NbQ.svg") center / contain no-repeat;
 }
 
 .basic-report-page .low-noise-content {
@@ -1056,6 +1121,50 @@ button:active,
   background-size: 17px;
 }
 
+.device-filter-dropdown {
+  position: relative;
+  min-width: 0;
+}
+
+.device-filter-trigger {
+  width: 100%;
+}
+
+.device-filter-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  left: 0;
+  display: grid;
+  width: 100%;
+  min-width: 160px;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow:
+    0 12px 24px rgba(17, 24, 39, 0.1),
+    0 3px 8px rgba(17, 24, 39, 0.06);
+}
+
+.device-filter-menu[hidden] {
+  display: none;
+}
+
+.device-filter-menu button {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.device-filter-menu button:hover {
+  background: #bdc0c0;
+}
+
 .device-warning-banner {
   border-radius: var(--pp-card-radius);
 }
@@ -1123,6 +1232,17 @@ button:active,
 .device-list-page .device-filter-bar input::placeholder,
 .device-list-page .device-list-meta p:last-child {
   color: #6b7280;
+}
+
+.device-list-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 28px;
+  border-radius: 18px;
+  background: #ffffff;
+  color: #6b7280;
+  text-align: center;
+  font-weight: 700;
 }
 
 .device-list-page .device-filter-bar input:focus,
@@ -1408,6 +1528,42 @@ button:active,
   box-shadow:
     0 4px 10px rgba(17, 24, 39, 0.05),
     0 1px 3px rgba(17, 24, 39, 0.03);
+}
+
+.device-detail-page .measurement-summary dl > div.measurement-status--stable {
+  background: rgba(34, 197, 94, 0.12);
+  box-shadow:
+    inset 0 0 0 1px rgba(34, 197, 94, 0.22),
+    0 4px 10px rgba(34, 197, 94, 0.08);
+}
+
+.device-detail-page .measurement-summary dl > div.measurement-status--warning {
+  background: rgba(170, 18, 57, 0.1);
+  box-shadow:
+    inset 0 0 0 1px rgba(170, 18, 57, 0.22),
+    0 4px 10px rgba(170, 18, 57, 0.08);
+}
+
+.device-detail-page .measurement-summary dl > div.measurement-status--connection {
+  background: rgba(189, 192, 192, 0.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(189, 192, 192, 0.34),
+    0 4px 10px rgba(17, 24, 39, 0.04);
+}
+
+.device-detail-page .measurement-summary dl > div.measurement-status--stable dt,
+.device-detail-page .measurement-summary dl > div.measurement-status--stable dd {
+  color: #15803d !important;
+}
+
+.device-detail-page .measurement-summary dl > div.measurement-status--warning dt,
+.device-detail-page .measurement-summary dl > div.measurement-status--warning dd {
+  color: #aa1239 !important;
+}
+
+.device-detail-page .measurement-summary dl > div.measurement-status--connection dt,
+.device-detail-page .measurement-summary dl > div.measurement-status--connection dd {
+  color: #383838 !important;
 }
 
 .device-detail-page .measurement-event-list {

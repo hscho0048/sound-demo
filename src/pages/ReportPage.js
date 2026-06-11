@@ -10,7 +10,29 @@ const applianceReports = [
   { name: '청소기', positive: '+12', negative: '-3' }
 ];
 
+const REPORT_PERIOD_OPTIONS = ['조회 기간', '최근 3일', '최근 1주', '최근 1달'];
+
 let faceControllers = [];
+let reportPeriodCleanup = null;
+
+function reportPeriodMenu() {
+  return `
+    <div class="report-period-dropdown">
+      <button type="button" class="report-period-button" data-report-period-trigger>
+        ${escapeHtml(REPORT_PERIOD_OPTIONS[0])}
+      </button>
+      <div class="report-period-menu" data-report-period-menu hidden>
+        ${REPORT_PERIOD_OPTIONS.map(
+          (option) => `
+            <button type="button" data-report-period-option="${escapeHtml(option)}">
+              ${escapeHtml(option)}
+            </button>
+          `
+        ).join('')}
+      </div>
+    </div>
+  `;
+}
 
 function parseReactionCount(value) {
   const number = Number.parseInt(String(value ?? '').replace(/[^\d-]/g, ''), 10);
@@ -66,10 +88,10 @@ export async function renderReportPage() {
     <section class="page basic-report-page" aria-label="기본 리포트 화면">
       <header class="basic-report-header">
         <div class="basic-report-heading">
-          <h1>기본 리포트</h1>
+          <h1>리포트</h1>
           <p>저장된 이벤트를 기반으로 한 규칙 기반 요약 · 서버 AI 추론 없음</p>
         </div>
-        <button type="button" class="report-period-button">기간: 최근 7일</button>
+        ${reportPeriodMenu()}
       </header>
 
       <section class="report-appliance-grid" aria-label="기기별 반응 카드">
@@ -176,6 +198,28 @@ export function mountReportPage({ navigate } = {}) {
     });
   });
 
+  const periodTrigger = document.querySelector('[data-report-period-trigger]');
+  const periodMenu = document.querySelector('[data-report-period-menu]');
+
+  periodTrigger?.addEventListener('click', () => {
+    if (periodMenu) periodMenu.hidden = !periodMenu.hidden;
+  });
+
+  document.querySelectorAll('[data-report-period-option]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (periodTrigger) periodTrigger.textContent = button.dataset.reportPeriodOption;
+      if (periodMenu) periodMenu.hidden = true;
+    });
+  });
+
+  const closePeriodMenu = (event) => {
+    if (!event.target.closest('.report-period-dropdown') && periodMenu) {
+      periodMenu.hidden = true;
+    }
+  };
+  document.addEventListener('click', closePeriodMenu);
+  reportPeriodCleanup = () => document.removeEventListener('click', closePeriodMenu);
+
   const popupController = mountGptDetailReportPopUp({
     onAgree: async () => {
       const status = document.querySelector('#gpt-report-status');
@@ -200,4 +244,6 @@ export function mountReportPage({ navigate } = {}) {
 export function cleanupReportPage() {
   faceControllers.forEach((controller) => controller.dispose?.());
   faceControllers = [];
+  reportPeriodCleanup?.();
+  reportPeriodCleanup = null;
 }

@@ -41,9 +41,9 @@ export async function renderHomeDashboardPage() {
   const syncTime = getSyncTime(status);
 
   return `
-    <section class="page thinq-dashboard-page" aria-label="Main dashboard">
+    <section class="page thinq-dashboard-page" aria-label="메인 대시보드">
       ${householdHeader({
-        status: `Last sync: ${syncTime}`,
+        status: `마지막 동기화: ${syncTime}`,
         extraHtml: `
           <div
             id="dashboard-server-state"
@@ -55,51 +55,51 @@ export async function renderHomeDashboardPage() {
       })}
 
       <div class="dashboard-main-grid">
-        <button class="dashboard-home-card" data-dashboard-home-link type="button" aria-label="Open 3D view">
-          <h2>Home monitor</h2>
-          <div id="dashboard-home-scene" class="dashboard-home-scene" aria-label="Fixed top view of the home"></div>
-          <p class="dashboard-sync">Last sync: ${escapeHtml(syncTime)}</p>
+        <button class="dashboard-home-card" data-dashboard-home-link type="button" aria-label="3D 홈 보기 열기">
+          <h2>Home</h2>
+          <div id="dashboard-home-scene" class="dashboard-home-scene" aria-label="집 내부 고정 상단 보기"></div>
+          <p class="dashboard-sync">마지막 동기화: ${escapeHtml(syncTime)}</p>
         </button>
 
-        <aside class="dashboard-summary-column" aria-label="Home summary">
+        <aside class="dashboard-summary-column" aria-label="홈 요약">
           <section class="dashboard-info-card dashboard-climate-card">
-            <h2>Climate</h2>
+            <h2>실내 환경</h2>
             <strong>${temperature} &deg;C</strong>
             <strong>${humidity}%</strong>
           </section>
 
           <section class="dashboard-info-card dashboard-noise-card">
-            <h2>Noise</h2>
-            <strong>Stable</strong>
-            <p>No critical events</p>
+            <h2>소음 상태</h2>
+            <strong>안정</strong>
+            <p>중요 이벤트 없음</p>
             <div class="dashboard-progress" aria-hidden="true">
               <span style="width: 76%"></span>
             </div>
           </section>
 
           <section class="dashboard-info-card dashboard-report-shortcut">
-            <h2>Daily report</h2>
-            <p>Noise summary and reactions.</p>
-            <a class="dashboard-report-button" href="#/reports">Open</a>
+            <h2>일일 리포트</h2>
+            <p>소음 요약과 반응을 확인하세요.</p>
+            <a class="dashboard-report-button" href="#/reports">열기</a>
           </section>
 
           <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--positive" type="button">
             <strong aria-hidden="true">+</strong>
-            <h2>Good</h2>
-            <p>Save feedback</p>
+            <h2>좋아요</h2>
+            <p>피드백 저장</p>
           </button>
 
           <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--negative" type="button">
             <strong aria-hidden="true">-</strong>
-            <h2>Bad</h2>
-            <p>Save feedback</p>
+            <h2>불편해요</h2>
+            <p>피드백 저장</p>
           </button>
 
           <section class="dashboard-info-card dashboard-detection-card">
-            <h2>Detected sound</h2>
-            <p>Source</p>
-            <strong>robot_vacuum</strong>
-            <p>relative dB <b>62 dB</b></p>
+            <h2>감지된 소리</h2>
+            <p>소음원</p>
+            <strong>로봇청소기</strong>
+            <p>상대 소음 <b>62 dB</b></p>
           </section>
         </aside>
       </div>
