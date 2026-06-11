@@ -32,7 +32,13 @@ export async function loginWithGoogle(idToken, profile = {}) {
 }
 
 export function loginWithLocalDev() {
-  return loginWithGoogle(DEV_AUTH_PROFILE.idToken, DEV_AUTH_PROFILE);
+  // 테스트용: 백엔드 없이 데모 토큰으로 즉시 로그인
+  const token = DEMO_AUTH_TOKEN;
+  tokenStorage.set(token);
+  return Promise.resolve({
+    accessToken: token,
+    user: defaultAuthUser(DEV_AUTH_PROFILE)
+  });
 }
 
 export async function getMe() {
