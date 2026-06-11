@@ -1232,13 +1232,13 @@ button:active,
 
 /* Report page: mint-care color refinement */
 .basic-report-page .report-period-button {
-  background: #eafbf7;
-  color: #149a88;
+  background: #28c7b0;
+  color: #ffffff;
 }
 
 .basic-report-page .report-period-button:hover,
 .basic-report-page .report-period-button:active {
-  background: #28c7b0;
+  background: #149a88;
   color: #ffffff;
 }
 
@@ -1299,6 +1299,87 @@ button:active,
   color: #b95464;
 }
 
+.basic-report-page .report-appliance-card .report-metric-box--soft {
+  background: #eaf7f0;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box--soft strong,
+.basic-report-page .report-appliance-card .report-metric-box--soft span {
+  color: #2f8f5b;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) {
+  background: #fbecef;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) strong,
+.basic-report-page .report-appliance-card .report-metric-box:not(.report-metric-box--soft) span {
+  color: #b95464;
+}
+
+.basic-report-page .report-appliance-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.basic-report-page .report-appliance-card h2 {
+  max-width: 152px;
+  margin-bottom: 12px;
+  font-size: 30px;
+  line-height: 1.06;
+}
+
+.basic-report-page .report-appliance-card .report-face-viewer {
+  top: 16px;
+  left: calc(50% + 48px);
+  right: auto;
+  width: 84px;
+  height: 84px;
+  transform: translateX(-50%);
+}
+
+.basic-report-page .report-appliance-card .report-face-trigger {
+  top: 16px;
+  left: calc(50% + 48px);
+  right: auto;
+  width: 84px;
+  height: 84px;
+  transform: translateX(-50%) !important;
+}
+
+.basic-report-page .report-appliance-card h2 {
+  display: flex;
+  min-height: 84px;
+  max-width: 206px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  padding-right: 100px;
+  text-align: left;
+}
+
+.basic-report-page .report-appliance-metrics {
+  align-self: end;
+  gap: 14px;
+  margin-top: 0;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box {
+  min-height: 98px;
+  padding: 16px 14px 14px;
+  border-radius: 16px;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box strong {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.basic-report-page .report-appliance-card .report-metric-box span {
+  font-size: 14px;
+  letter-spacing: 0;
+}
+
 .basic-report-page .reaction-split-bar,
 .basic-report-page .ranking-bar {
   background: #e6eaf0;
@@ -1347,11 +1428,11 @@ button:active,
 }
 
 .basic-report-page .gpt-report-card .detail-card-icon {
-  background: #eef7ff;
+  background: #eafbf7;
 }
 
 .basic-report-page .donut-chart {
-  background: conic-gradient(#28c7b0 0 38%, #5aa9e6 38% 58%, #e6eaf0 58% 100%);
+  background: conic-gradient(#28c7b0 0 58%, #4b5563 58% 100%);
 }
 
 .basic-report-page .legend-dot--red,
@@ -1360,12 +1441,40 @@ button:active,
 }
 
 .basic-report-page .legend-dot--gray {
-  background: #9b8afb;
+  background: #4b5563;
+}
+
+.basic-report-page .donut-legend p:first-of-type {
+  border: 1px solid rgba(40, 199, 176, 0.16);
+  background: #eafbf7;
+}
+
+.basic-report-page .donut-legend p:first-of-type strong,
+.basic-report-page .donut-legend p:first-of-type b {
+  color: #149a88;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2) {
+  border: 1px solid rgba(75, 85, 99, 0.14);
+  background: #f3f4f6;
+}
+
+.basic-report-page .donut-legend p:nth-of-type(2) strong,
+.basic-report-page .donut-legend p:nth-of-type(2) b {
+  color: #4b5563;
+}
+
+.basic-report-page .donut-chart strong {
+  color: #087f70;
 }
 
 .basic-report-page .donut-legend small,
 .basic-report-page .gpt-report-note {
   background: #eafbf7;
+}
+
+.basic-report-page .donut-legend small {
+  background: #fafbfc;
 }
 
 .basic-report-page #generate-gpt-report {
