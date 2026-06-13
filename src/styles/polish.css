@@ -549,7 +549,11 @@ button:active,
     0 2px 6px rgba(17, 24, 39, 0.05);
 }
 
-/* --- Home dashboard right cards: small visual details --- */
+/* --- Home dashboard right cards: small visual details ---
+   Desktop-only redesign (grid restructure, large type, ::before icons).
+   Below 641px mobile-apk.css owns the dashboard cards, so this whole block
+   is scoped to ≥641px — otherwise it crushes the 150px mobile cards. */
+@media (min-width: 641px) {
 .dashboard-summary-column > .dashboard-climate-card,
 .dashboard-summary-column > .dashboard-noise-card,
 .dashboard-summary-column > .dashboard-report-shortcut {
@@ -751,6 +755,7 @@ button:active,
   color: #ffffff;
   box-shadow: 0 14px 26px rgba(20, 154, 136, 0.2);
 }
+} /* end @media (min-width: 641px) — Home dashboard right cards */
 
 /* --- Report page prototype: align with dashboard/device tone ---
    Bounded to >640px: below that, mobile-apk.css owns the report layout. */
@@ -4019,4 +4024,37 @@ body,
     inset 0 1px 1px rgba(255, 255, 255, 0.42),
     inset 0 -1px 2px rgba(36, 127, 121, 0.22),
     0 2px 5px rgba(63, 184, 175, 0.22) !important;
+}
+
+/* ============================================================
+   Mobile (≤640px) corrections for the merged mint desktop UI.
+   lsj's mint redesign added unscoped desktop card layouts that
+   outrank mobile-apk.css on phones; re-assert the phone layout here.
+   ============================================================ */
+@media (max-width: 640px) {
+  /* Device list card: the desktop grid (104px image column + 58px side
+     padding + 34px gap) starved the content column to ~81px and
+     ellipsis-clipped the device name ("세탁기" → "세.."). Restore
+     mobile-apk's flexible content column and phone padding. */
+  .device-list-card {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 18px 22px;
+  }
+
+  /* 3D appliance cards: three-home-fixes.css keeps a fixed 96px picture
+     column even though the picture is hidden on phones, collapsing the
+     2nd column (room label) to ~0px so "주방"/"세탁실" stack vertically.
+     The card is two-up and narrow here — flow its contents in one column. */
+  .three-view-page .appliance-noise-card {
+    grid-template-columns: 1fr;
+  }
+
+  .three-view-page .appliance-noise-card p,
+  .three-view-page .appliance-noise-card strong,
+  .three-view-page .appliance-noise-card .appliance-picture-slot {
+    grid-column: 1;
+    justify-self: start;
+    text-align: left;
+  }
 }

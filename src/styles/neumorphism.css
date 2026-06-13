@@ -953,7 +953,9 @@ input[type='range']::-webkit-slider-thumb {
     --apk-copy: #57555c;
     --apk-surface: #f5f5f5;
     --apk-control: #f5f5f5;
-    --apk-primary: #4b164c;
+    /* mint 채택: 모바일 기본 CTA(기기 Detail 칩 등)를 보라(#4b164c) 대신
+       민트 딥으로 통일 */
+    --apk-primary: #149a88;
     --apk-border: transparent;
     --apk-strong-border: transparent;
     --apk-card-radius: 24px;
