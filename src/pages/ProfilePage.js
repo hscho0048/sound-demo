@@ -14,7 +14,9 @@ export async function renderProfilePage() {
         </aside>
 
         <section class="profile-card profile-identity-card" aria-label="프로필 정보">
-          <div class="profile-photo-placeholder" aria-label="프로필 사진 자리"></div>
+          <div class="profile-photo-placeholder" aria-label="Hosung Cho 프로필 사진">
+            <span class="profile-avatar-initials" aria-hidden="true">HC</span>
+          </div>
           <div>
             <h2>Hosung Cho</h2>
             <p>@hosung</p>

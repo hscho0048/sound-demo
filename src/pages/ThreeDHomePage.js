@@ -1,6 +1,7 @@
 import { createInteractiveHomeScene } from '../three/interactiveHomeScene.js';
 import { householdHeader } from '../components/householdHeader.js';
 import { mountLowConfidenceNoticePopup } from './LowConfidenceNoticePopup.js';
+import { getDeviceIcon } from '../utils/deviceIcons.js';
 
 let sceneController = null;
 let lowConfidencePopupCleanup = null;
@@ -48,7 +49,7 @@ export async function renderThreeDHomePage() {
                   <h2>${item.name}</h2>
                   <p>${item.room}</p>
                   <div class="appliance-noise-card__body">
-                    <div class="appliance-picture-slot" aria-label="${item.name} 이미지 자리"></div>
+                    <div class="appliance-picture-slot has-device-icon" aria-label="${item.name} 이미지 자리">${getDeviceIcon(item.name)}</div>
                     <strong>${item.decibel} dB</strong>
                   </div>
                 </section>

@@ -167,10 +167,11 @@ button:disabled {
 .low-confidence-primary,
 .gpt-consent-button,
 .dashboard-report-button {
-  background: var(--neu-accent);
+  background: linear-gradient(155deg, #45e2cc 0%, var(--neu-accent) 52%, #15b09b 100%);
   color: #ffffff;
   box-shadow: 5px 5px 12px #cfcfcf, -5px -5px 12px #ffffff,
-    inset 1px 1px 1px rgba(255, 255, 255, 0.45);
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 7px 16px rgba(15, 160, 140, 0.26);
 }
 
 .primary-button:hover,
@@ -182,8 +183,11 @@ button:disabled {
 .low-confidence-primary:hover,
 .gpt-consent-button:hover,
 .dashboard-report-button:hover {
-  background: var(--neu-accent);
+  background: linear-gradient(155deg, #4ee9d3 0%, #2bccb6 52%, #19bba4 100%);
   color: #ffffff;
+  box-shadow: 5px 5px 12px #cfcfcf, -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    0 9px 20px rgba(15, 160, 140, 0.32);
 }
 
 .primary-button:active,
@@ -1574,13 +1578,16 @@ body,
     padding: 0 12px;
   }
 
+  /* 좋아요/불편해요 카드가 min-height 220px + gap 34px 로 과도하게 길어 가운데에
+     큰 빈 공간이 생겼다. 옆 카드(132px)와 비슷한 높이로 줄이고 아이콘·라벨을
+     자연스럽게 묶어 탭하기 좋은 컴팩트한 카드로 정리. */
   .dashboard-reaction-card {
-    min-height: 220px !important;
-    gap: 34px !important;
+    min-height: 150px !important;
+    gap: 12px !important;
   }
 
   .dashboard-reaction-card p {
-    margin-top: -16px !important;
+    margin-top: 0 !important;
   }
 
   .dashboard-report-shortcut {
@@ -1765,4 +1772,206 @@ body,
    빈 칸으로 보임) 제거 — 데스크탑에서만 나타나던 장식. */
 .dashboard-summary-column > .dashboard-report-shortcut h2::before {
   content: none !important;
+}
+
+/* 프로필: summary 카드가 grid-template-rows:1fr auto 1fr auto 1fr + min-height:420px
+   로 세 섹션을 균등 stretch 하고 내용을 가운데 정렬해, 데스크탑/모바일 모두에서
+   섹션마다 큰 빈 공간이 생겼다. 행을 콘텐츠 높이에 맞추고 내용을 위로 정렬해
+   계정/보안/작업 정보가 자연스럽게 묶이도록 한다. neumorphism.css가 마지막으로
+   로드되므로 main/settings-suite/mobile-apk 의 stretch 규칙을 모두 덮어쓴다. */
+.profile-summary-card {
+  grid-template-rows: auto !important;
+  grid-auto-rows: auto !important;
+  align-content: start !important;
+  min-height: 0 !important;
+  gap: 20px !important;
+}
+
+.profile-summary-section {
+  justify-content: flex-start !important;
+  align-self: auto !important;
+  min-height: 0 !important;
+}
+
+/* 계정/보안/작업 카드의 강제 최소 높이 해제 — 콘텐츠가 적어 아래가 비어 보이던 원인. */
+.profile-account-card,
+.profile-security-card,
+.profile-actions-card {
+  min-height: 0 !important;
+}
+
+/* 계정 작업 버튼(수정/비밀번호/Log out)이 카드와 같은 색이라 평범한 텍스트처럼
+   보였다. 뉴모피즘 raised 처리로 버튼임을 분명히 하고, 누르면 inset 으로 눌린다. */
+.profile-action-buttons button {
+  background: var(--neu-surface) !important;
+  box-shadow: var(--neu-outset-sm) !important;
+  font-weight: 600;
+  transition: box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.profile-action-buttons button:hover {
+  transform: translateY(-1px);
+}
+
+.profile-action-buttons button:active {
+  box-shadow: var(--neu-inset-soft) !important;
+  transform: translateY(0);
+}
+
+/* ===== IoT: 기기 유형별 아이콘 + 연결 상태 점 =====
+   기존엔 모든 기기가 동일한 범용 글리프(.device-list-picture::after)를 썼다.
+   가전별 라인 아이콘을 인라인 SVG로 넣어 한눈에 구분되게 하고, 카드 우상단에
+   연결 상태(안정/주의/연결 필요)를 색 점으로 표시한다. 민트 악센트는 유지. */
+.has-device-icon::after {
+  content: none !important; /* 범용 글리프 숨김 — 유형별 아이콘으로 대체 */
+}
+
+.device-list-picture.has-device-icon,
+.appliance-picture-slot.has-device-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.device-glyph {
+  width: clamp(34px, 44%, 60px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  color: var(--neu-accent-strong);
+}
+
+.appliance-picture-slot.has-device-icon .device-glyph {
+  width: clamp(30px, 56%, 52px);
+}
+
+.device-conn-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #b0b6c0;
+  box-shadow: 0 0 0 2.5px #ffffff;
+}
+
+.device-conn-dot.is-stable {
+  background: #2bb673;
+}
+
+.device-conn-dot.is-warning {
+  background: #e0556b;
+}
+
+.device-conn-dot.is-connection {
+  background: #b0b6c0;
+}
+
+/* 모바일 헤더 밴드(min-height:146px)는 부제목이 있는 페이지(반응기록/시스템 상태
+   등)엔 맞지만, 부제목이 없는 GPT 상세/기기 상세에선 제목 아래로 ~90px 빈
+   공간이 남는다. 두 페이지만 콘텐츠 높이에 맞춰 밴드를 줄여 상단 공간을 회수. */
+@media (max-width: 640px) {
+  .gpt-detail-header,
+  .device-detail-topbar {
+    min-height: 0 !important;
+    padding-top: 30px !important;
+    padding-bottom: 20px !important;
+  }
+}
+
+/* 프로필 아바타: 빈 회색 원 대신 민트 그라데이션 + 이니셜 모노그램으로 채워
+   완성도 있게. 입체감을 위해 안쪽 음영 + 뉴모피즘 외곽 그림자. */
+.profile-photo-placeholder {
+  display: grid !important;
+  place-items: center;
+  background: radial-gradient(circle at 32% 26%, #63e3ce 0%, #23b7a3 52%, #0f9a88 100%) !important;
+  box-shadow:
+    inset 0 -10px 22px rgba(7, 92, 82, 0.28),
+    inset 0 7px 16px rgba(255, 255, 255, 0.35),
+    var(--neu-outset) !important;
+}
+
+.profile-avatar-initials {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: clamp(40px, 8vw, 66px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-shadow: 0 2px 7px rgba(6, 80, 71, 0.32);
+}
+
+/* 좋아요/불편해요: +/- 텍스트 → 엄지 아이콘. 칩을 키우고 긍·부정 색을 분리해
+   한눈에 구분되게. */
+.dashboard-reaction-card strong {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.reaction-thumb {
+  display: block;
+  width: 58%;
+  height: 58%;
+}
+
+.dashboard-reaction-card--positive strong {
+  background: #e3f7f0 !important;
+  color: #129c84 !important;
+}
+
+.dashboard-reaction-card--negative strong {
+  background: #fdecee !important;
+  color: #d2566a !important;
+}
+
+/* ===== 브랜드 마크 (로그인 / 사이드바) ===== */
+.brand-mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 4px 9px rgba(15, 160, 140, 0.26));
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.login-brand span {
+  color: var(--neu-accent-strong);
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.sidebar-brand {
+  display: flex !important;
+  align-items: center;
+  gap: 11px;
+}
+
+.sidebar-brand .brand-mark {
+  width: 30px;
+  height: 30px;
+}
+
+/* 기기 추가 / GPT 생성 버튼도 다른 주요 CTA와 동일한 민트 그라데이션으로 통일.
+   기존 page-scoped 규칙(.device-list-page .device-add-button 등)과 동일 specificity로
+   맞춰 마지막 로드 순서로 이긴다. */
+.device-list-page .device-add-button,
+.basic-report-page #generate-gpt-report,
+.gpt-report-card button {
+  background: linear-gradient(155deg, #45e2cc 0%, var(--neu-accent) 52%, #15b09b 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 5px 5px 12px #cfcfcf, -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 7px 16px rgba(15, 160, 140, 0.26) !important;
+}
+
+.device-list-page .device-add-button:hover,
+.basic-report-page #generate-gpt-report:hover,
+.gpt-report-card button:hover {
+  background: linear-gradient(155deg, #4ee9d3 0%, #2bccb6 52%, #19bba4 100%) !important;
 }

@@ -84,13 +84,17 @@ export async function renderHomeDashboardPage() {
           </section>
 
           <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--positive" type="button">
-            <strong aria-hidden="true">+</strong>
+            <strong aria-hidden="true">
+              <svg class="reaction-thumb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V9.8l4.4-6.6c1.2 0 2.1.9 1.9 2.1L12.5 9H18a2 2 0 0 1 2 2.3l-1.1 6.4A2.2 2.2 0 0 1 16.7 21z"/><path d="M7 9.8H4V21h3z"/></svg>
+            </strong>
             <h2>좋아요</h2>
             <p>피드백 저장</p>
           </button>
 
           <button class="dashboard-info-card dashboard-reaction-card dashboard-reaction-card--negative" type="button">
-            <strong aria-hidden="true">-</strong>
+            <strong aria-hidden="true">
+              <svg class="reaction-thumb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3v11.2l-4.4 6.6c-1.2 0-2.1-.9-1.9-2.1l.8-3.7H6a2 2 0 0 1-2-2.3l1.1-6.4A2.2 2.2 0 0 1 7.3 3z"/><path d="M17 14.2h3V3h-3z"/></svg>
+            </strong>
             <h2>불편해요</h2>
             <p>피드백 저장</p>
           </button>

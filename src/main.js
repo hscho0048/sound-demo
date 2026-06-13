@@ -7,6 +7,7 @@ import './styles/polish.css';
 import './styles/neumorphism.css';
 import './components/liquidGlassLoader.js';
 import { escapeHtml } from './utils/html.js';
+import { brandMark } from './components/brandMark.js';
 
 // APK(WebView)는 상태바/제스처바 아래까지 그려지므로 safe-area 패딩 대상으로 표시한다.
 if (/Android/i.test(navigator.userAgent)) {
@@ -222,7 +223,7 @@ function shell(content, routeTitle) {
     <div class="app-shell app-shell--desktop">
       <div class="app-workspace">
         <aside class="sidebar">
-          <h1>SoundCare</h1>
+          <h1 class="sidebar-brand">${brandMark('side')}<span>SoundCare</span></h1>
           <nav>${nav}</nav>
           <div class="sidebar-footer">
             <a class="sidebar-footer-link ${settingsActive ? 'is-active' : ''}" href="#/settings" aria-label="Settings">

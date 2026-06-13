@@ -817,14 +817,11 @@
     font-size: 11px;
   }
 
-  .gpt-report-card {
-    background: var(--apk-ink);
-    color: var(--apk-surface);
-  }
-
+  /* 카드 배경은 neumorphism.css(마지막 로드)가 밝은 surface로 덮어쓰므로
+     예전 다크 배경 가정의 흰색 텍스트를 ink 색으로 맞춰 가독성 확보 */
   .gpt-report-card h2,
   .gpt-report-card p {
-    color: var(--apk-surface);
+    color: var(--apk-ink);
   }
 
   #generate-gpt-report {

@@ -1,4 +1,5 @@
 import { escapeHtml } from '../utils/html.js';
+import { getDeviceIcon } from '../utils/deviceIcons.js';
 import {
   getDeviceFailurePayload,
   isDeviceConnectionFailed,
@@ -73,7 +74,10 @@ function deviceCard(device) {
         : 'is-stable';
   return `
     <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.deviceName)} (${escapeHtml(room)}, ${escapeHtml(status)}) 기기 상세" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
-      <div class="device-list-picture" aria-hidden="true"></div>
+      <div class="device-list-picture has-device-icon" aria-hidden="true">
+        ${getDeviceIcon(device.deviceName)}
+        <span class="device-conn-dot ${statusClass}"></span>
+      </div>
       <div class="device-list-meta">
         <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
         <p>${escapeHtml(device.decibel)} dB</p>

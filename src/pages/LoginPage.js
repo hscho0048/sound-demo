@@ -1,4 +1,5 @@
 import { loginWithLocalDev } from '../api/authApi.js';
+import { brandMark } from '../components/brandMark.js';
 
 export function renderLoginPage() {
   return `
@@ -6,7 +7,7 @@ export function renderLoginPage() {
       <div class="login-window">
         <div class="login-stage">
           <div class="login-card">
-            <p class="eyebrow">SoundCare</p>
+            <div class="login-brand">${brandMark('login')}<span>SoundCare</span></div>
             <h1>Smart noise dashboard</h1>
             <p>Sign in to monitor home noise, devices, and daily reports.</p>
             <button id="local-login-button" class="primary-button">
