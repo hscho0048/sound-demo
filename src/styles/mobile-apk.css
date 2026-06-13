@@ -139,7 +139,9 @@
     width: calc(100% + (var(--apk-page-x) * 2));
     min-height: 146px;
     margin: 0 calc(var(--apk-page-x) * -1) 20px;
-    padding: 38px calc(var(--apk-page-x) + 20px) 26px;
+    /* left padding pulled in so the back button lines up with the cards/content
+       edge instead of sitting ~48px in */
+    padding: 38px calc(var(--apk-page-x) + 20px) 26px 0;
     border-bottom: 2px solid var(--apk-border);
     background: var(--apk-surface);
   }

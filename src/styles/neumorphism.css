@@ -1145,3 +1145,26 @@ input[type='range']::-webkit-slider-thumb {
 .system-progress span {
   background: var(--neu-accent);
 }
+
+/* ============================================================
+   기기 상세 헤더 — 데스크탑도 모바일처럼: 브레드크럼 숨기고
+   둥근 뒤로가기 버튼 + 제목을 한 줄로 나란히.
+   ============================================================ */
+@media (min-width: 641px) {
+  .device-detail-page .device-detail-title-group {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: 14px;
+  }
+
+  .device-detail-page .device-detail-title-group p {
+    display: none;
+  }
+
+  .device-detail-page .device-detail-title-group h1 {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+}
