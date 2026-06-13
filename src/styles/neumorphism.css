@@ -1752,3 +1752,9 @@ body,
     min-height: 0 !important;
   }
 }
+
+/* 홈 '일일 리포트' 제목 옆 빈 민트 박스(::before에 아이콘 그래픽이 없어
+   빈 칸으로 보임) 제거 — 데스크탑에서만 나타나던 장식. */
+.dashboard-summary-column > .dashboard-report-shortcut h2::before {
+  content: none !important;
+}
