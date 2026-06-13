@@ -13,9 +13,11 @@
   --neu-shadow-dark: #d1d1d1;
   --neu-shadow-deep: #b7b7b7;
   --neu-shadow-light: #ffffff;
-  --neu-accent-soft: #f8e7f6;
-  --neu-accent: #dd88cf;
-  --neu-accent-strong: #4b164c;
+  /* mint 통일: 브랜드 액센트(활성 탭/슬라이더/포커스 등)를 보라 → 민트로.
+     기존 보라값: soft #f8e7f6 / accent #dd88cf / strong #4b164c */
+  --neu-accent-soft: #eafbf7;
+  --neu-accent: #28c7b0;
+  --neu-accent-strong: #087f70;
   --neu-radius-xs: 12px;
   --neu-radius-sm: 18px;
   --neu-radius-md: 24px;
@@ -52,7 +54,7 @@
   --pp-pink-soft: var(--neu-accent-soft);
   --pp-muted: var(--neu-muted);
   --pp-card-radius: var(--neu-radius-md);
-  --pp-ring: 0 0 0 4px rgba(221, 136, 207, 0.32);
+  --pp-ring: 0 0 0 4px rgba(40, 199, 176, 0.32);
 
   color: var(--neu-text);
   background: var(--neu-bg);

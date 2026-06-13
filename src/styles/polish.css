@@ -4057,4 +4057,22 @@ body,
     justify-self: start;
     text-align: left;
   }
+
+  /* 3D home appliance cards: the neumorphic raised surface was sitting on the
+     whole .appliance-noise-panel (one big puffed slab) while the mint layer
+     flattened the individual cards. Move the neumorphism onto each card so
+     they read as separate raised tiles; make the panel a plain grid. */
+  .three-view-page .appliance-noise-panel {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
+  .three-view-page .appliance-noise-card {
+    background: var(--neu-surface) !important;
+    border-radius: var(--neu-radius-sm) !important;
+    box-shadow: var(--neu-outset) !important;
+  }
 }
