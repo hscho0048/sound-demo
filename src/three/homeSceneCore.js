@@ -119,6 +119,16 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
   let currentResponsiveView = '';
   let particlesEnabled = true;
 
+  // TV: starts off (blank screen); clicking it shows the tvpic texture.
+  let tvScreen = null;
+  let tvOnMaterial = null;
+  let tvOffMaterial = null;
+  let tvOn = false;
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2();
+  let pointerDownX = 0;
+  let pointerDownY = 0;
+
   container.innerHTML = '';
   container.classList.add('is-loading');
   container.appendChild(renderer.domElement);
@@ -129,6 +139,10 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
   const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(resizeRenderer);
   resizeObserver?.observe(container);
   window.addEventListener('resize', resizeRenderer);
+  if (!isDashboard) {
+    renderer.domElement.addEventListener('pointerdown', handlePointerDown);
+    renderer.domElement.addEventListener('pointerup', handleTvTap);
+  }
 
   loadScene();
   animate();
@@ -206,6 +220,17 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
       // tiles). Hide it here; we redraw its centerline lifted onto the floor.
       if (/robot_vacuum_path_curve/i.test(obj.name)) {
         obj.visible = false;
+        return;
+      }
+
+      // TV screen ships with tvpic baked on; keep that as the "on" material but
+      // start with a blank dark screen so the picture only appears on click.
+      if (obj.name === 'living_room_tv_screen') {
+        prepareModelMaterial(obj);
+        tvScreen = obj;
+        tvOnMaterial = obj.material;
+        tvOffMaterial = new THREE.MeshBasicMaterial({ color: 0x0a0c12, toneMapped: false });
+        obj.material = tvOffMaterial;
         return;
       }
 
@@ -385,6 +410,47 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
       emitter.setRunning(state.running);
       emitter.setVisible(particlesEnabled);
     });
+  }
+
+  function toggleTV() {
+    if (!tvScreen) return;
+    tvOn = !tvOn;
+    tvScreen.material = tvOn ? tvOnMaterial : tvOffMaterial;
+  }
+
+  function handlePointerDown(event) {
+    pointerDownX = event.clientX;
+    pointerDownY = event.clientY;
+  }
+
+  // Tap (not drag) on the living-room TV toggles its screen picture on/off.
+  function handleTvTap(event) {
+    if (disposed || !tvScreen) return;
+    if (Math.hypot(event.clientX - pointerDownX, event.clientY - pointerDownY) > 6) return;
+
+    const rect = renderer.domElement.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    raycaster.setFromCamera(pointer, camera);
+
+    const hits = raycaster.intersectObject(homeRoot, true);
+    for (const hit of hits) {
+      let node = hit.object;
+      let isEmitter = false;
+      let isTv = false;
+      while (node) {
+        if (node.name === 'RuntimeSoundEmitter') isEmitter = true;
+        if (/living_room_tv/i.test(node.name)) isTv = true;
+        node = node.parent;
+      }
+      if (isEmitter) continue; // ignore the translucent sound-wave particles
+      if (isTv) {
+        toggleTV();
+        return;
+      }
+      // First solid (non-particle) hit isn't the TV → it's occluding; ignore.
+      return;
+    }
   }
 
   // Build the robot's route from the model's own path ribbon
@@ -617,6 +683,8 @@ export function createHomeScene(container, { mode = 'interactive' } = {}) {
       disposed = true;
       resizeObserver?.disconnect();
       window.removeEventListener('resize', resizeRenderer);
+      renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
+      renderer.domElement.removeEventListener('pointerup', handleTvTap);
       if (animationId) window.cancelAnimationFrame(animationId);
       controls?.dispose();
       dracoLoader.dispose?.();
