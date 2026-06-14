@@ -44,7 +44,7 @@ const deviceDetails = {
   },
   'robot-kitchen-2': {
     title: '식기세척기',
-    modelType: 'washer',
+    modelType: 'dishwasher',
     modelLabel: '식기세척기',
     serviceLabel: '저소음 모드',
     noiseLabel: '64 dB',
@@ -66,6 +66,7 @@ function getDetailConfig(deviceId) {
   if (deviceDetails[deviceId]) return deviceDetails[deviceId];
   if (deviceId?.includes('robot')) return deviceDetails['robot-living'];
   if (deviceId?.includes('fridge') || deviceId?.includes('refrigerator')) return deviceDetails['washer-laundry-2'];
+  if (deviceId?.includes('dish')) return deviceDetails['robot-kitchen-2'];
   return deviceDetails['washer-main'];
 }
 

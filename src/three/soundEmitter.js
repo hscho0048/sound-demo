@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
 
 const DECIBEL_MIN = 20;
 const DECIBEL_MAX = 95;
@@ -22,7 +21,7 @@ export function normalizeDecibel(decibel) {
 }
 
 export function radiusFromDecibel(decibel) {
-  return lerp(0.42, 2.25, smoothstep(0, 1, normalizeDecibel(decibel)));
+  return lerp(0.28, 0.95, smoothstep(0, 1, normalizeDecibel(decibel)));
 }
 
 export class SoundEmitter {
@@ -36,18 +35,47 @@ export class SoundEmitter {
     this.templateRoot = null;
     this.materials = [];
     this.particlesVisible = true;
+    this.mixer = null;
   }
 
-  attachTemplate(templateScene) {
-    this.templateRoot = cloneSkeleton(templateScene);
-    this.templateRoot.name = 'GLBSoundParticleTemplate';
+  attachTemplate(templateScene, animations = []) {
+    // The model is morph/transform-animated (no skinned meshes), so a plain deep
+    // clone is enough and keeps each emitter's hierarchy independent.
+    const inner = templateScene.clone(true);
+    inner.name = 'GLBSoundParticleInner';
+
+    // The futuristic_sound_wave model ships with a preview camera and ~380 tiny
+    // outer dispersion particles. Strip the camera and the dispersion cloud so the
+    // three concurrent emitters stay light and read as clean propagation shells.
+    const remove = [];
+    inner.traverse((obj) => {
+      if (/Preview_Camera/i.test(obj.name) || obj.isCamera) {
+        remove.push(obj);
+      } else if (/Outer_Spherical_Dispersion_Particle/i.test(obj.name)) {
+        remove.push(obj);
+      }
+    });
+    remove.forEach((obj) => obj.parent?.remove(obj));
+
+    // Normalise: recentre on the origin and scale so the cloud has unit radius,
+    // making the decibel-driven radius in update() behave in world units.
+    inner.updateWorldMatrix(true, true);
+    const box = new THREE.Box3().setFromObject(inner);
+    if (!box.isEmpty()) {
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const maxHalf = Math.max(size.x, size.y, size.z) * 0.5 || 1;
+      inner.position.sub(center);
+      inner.scale.multiplyScalar(1 / maxHalf);
+    }
+
     let materialIndex = 0;
-    this.templateRoot.traverse((obj) => {
+    inner.traverse((obj) => {
       if (!obj.isMesh) return;
       const material = new THREE.MeshBasicMaterial({
         color: this.color,
         transparent: true,
-        opacity: 0.3,
+        opacity: 0.085,
         depthWrite: false,
         side: THREE.DoubleSide,
         toneMapped: false
@@ -58,11 +86,29 @@ export class SoundEmitter {
       this.materials.push(material);
       materialIndex += 1;
     });
+
+    this.templateRoot = new THREE.Group();
+    this.templateRoot.name = 'GLBSoundParticleTemplate';
+    this.templateRoot.add(inner);
     this.root.add(this.templateRoot);
+
+    // Play the model's own baked propagation animation instead of procedurally
+    // pulsing the whole cloud. Skip the opacity/glow loop (it would fight our
+    // transparency) and the removed outer-dispersion tracks.
+    const clips = animations.filter(
+      (clip) => !/^Baked|Outer_Spherical_Dispersion/i.test(clip.name)
+    );
+    if (clips.length > 0) {
+      this.mixer = new THREE.AnimationMixer(inner);
+      clips.forEach((clip) => this.mixer.clipAction(clip).play());
+    }
   }
 
   setDecibel(decibel) {
     this.decibel = decibel;
+    if (this.templateRoot) {
+      this.templateRoot.scale.setScalar(radiusFromDecibel(decibel));
+    }
   }
 
   setRunning(running) {
@@ -79,51 +125,10 @@ export class SoundEmitter {
     this.root.visible = this.running && this.particlesVisible;
   }
 
-  update(time) {
-    if (!this.running || !this.templateRoot) return;
-
-    const db = normalizeDecibel(this.decibel);
-    const spread = smoothstep(0, 1, db);
-    const pulseSpeed = lerp(1.45, 4.9, db);
-    const mainWave = Math.sin(time * pulseSpeed);
-    const secondaryWave = Math.sin(time * pulseSpeed * 0.53 + 1.4);
-    const ripple = mainWave * 0.68 + secondaryWave * 0.32;
-    const radiusScale = radiusFromDecibel(this.decibel);
-    const globalPulse = 1 + lerp(0.025, 0.09, db) * ripple;
-    const breath = 1 + Math.sin(time * pulseSpeed * 0.31 + 1.2) * lerp(0.015, 0.05, db);
-    const templateScale = radiusScale * globalPulse * breath;
-    this.templateRoot.scale.setScalar(templateScale);
-    this.templateRoot.rotation.y = Math.sin(time * 0.28) * lerp(0.02, 0.1, db);
-    this.templateRoot.rotation.x = Math.sin(time * pulseSpeed * 0.34) * lerp(0.005, 0.035, db);
-    this.templateRoot.rotation.z = Math.cos(time * pulseSpeed * 0.31) * lerp(0.005, 0.03, db);
-    this.updateMorphTargets(db, spread, time, globalPulse);
-  }
-
-  updateMorphTargets(db, spread, time, globalPulse) {
-    const pulseSpeed = lerp(1.6, 5.6, db);
-    const pulse =
-      Math.sin(time * pulseSpeed) * 0.58 +
-      Math.sin(time * pulseSpeed * 0.61 + 0.9) * 0.28 +
-      Math.sin(time * pulseSpeed * 0.27 + 2.1) * 0.14;
-    const pulseAmount = pulse * 0.5 + 0.5;
-    const wavePulse = clamp01((0.32 + spread * 0.5 + pulseAmount * lerp(0.05, 0.18, db)) * globalPulse);
-    const highSpread = clamp01(0.08 + spread * 0.92);
-    const quietNarrow = clamp01((1 - spread) * 0.58);
-
-    this.templateRoot.traverse((obj) => {
-      if (!obj.isMesh || !obj.morphTargetDictionary || !obj.morphTargetInfluences) return;
-      const dict = obj.morphTargetDictionary;
-      const influences = obj.morphTargetInfluences;
-
-      if (dict.SHAPE_Particle_Wave_Pulse !== undefined) {
-        influences[dict.SHAPE_Particle_Wave_Pulse] = wavePulse;
-      }
-      if (dict.SHAPE_Decibel_High_Spread !== undefined) {
-        influences[dict.SHAPE_Decibel_High_Spread] = highSpread;
-      }
-      if (dict.SHAPE_Quiet_Narrow_Vibration !== undefined) {
-        influences[dict.SHAPE_Quiet_Narrow_Vibration] = quietNarrow;
-      }
-    });
+  update(dt) {
+    if (!this.running || !this.mixer) return;
+    // Louder sounds propagate faster; otherwise just let the baked clip loop.
+    const speed = lerp(0.55, 1.8, normalizeDecibel(this.decibel));
+    this.mixer.update(dt * speed);
   }
 }
