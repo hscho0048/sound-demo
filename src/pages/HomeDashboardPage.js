@@ -53,9 +53,16 @@ function deriveDashboard(status) {
   const dbValue = Number(status.decibelMax ?? status.decibelAvg);
   // ESP가 비활성(최신 소음/측정값이 오래됨)이면 감지/소음 값을 --로.
   const noiseFresh = isFreshTimestamp(status.createdAt);
+  // 온습도는 Flutter 허브 USB 센서가 올린 값. 최근(60초 내) 업로드가 없으면 미연결로 보고 --.
+  const SENSOR_FRESH_MS = 60000;
+  const sensorFresh = isFreshTimestamp(status.sensorUpdatedAt, SENSOR_FRESH_MS);
   return {
-    temperature: formatMetric(status.temperature ?? status.dashboardTemperature ?? roomClimate.temperature),
-    humidity: formatMetric(status.humidity ?? status.dashboardHumidity ?? roomClimate.humidity),
+    temperature: sensorFresh
+      ? formatMetric(status.temperature ?? status.dashboardTemperature ?? roomClimate.temperature)
+      : '--',
+    humidity: sensorFresh
+      ? formatMetric(status.humidity ?? status.dashboardHumidity ?? roomClimate.humidity)
+      : '--',
     syncTime: getSyncTime(status),
     soundSource: noiseFresh ? (SERVICE_LABEL_KO[status.currentServiceLabel] ?? '--') : '--',
     relativeDb: noiseFresh ? formatMetric(status.decibelMax ?? status.decibelAvg) : '--',

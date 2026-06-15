@@ -112,7 +112,13 @@ async function loadDeviceRows() {
   });
 }
 
+// 허브(LG AI 허브)는 소리를 내는 가전이 아니라 제어 허브이므로 dB/연결필요 상태로 보지 않는다.
+function isHubDevice(device) {
+  return device?.deviceType === 'hub';
+}
+
 function getDeviceStatus(device) {
+  if (isHubDevice(device)) return '연결됨';
   if (isDeviceConnectionFailed(device)) return '연결 필요';
 
   const decibel = Number(device.decibel);
@@ -150,11 +156,16 @@ function filterMenu(name, options) {
 }
 
 function deviceCard(device) {
-  const failed = isDeviceConnectionFailed(device);
+  const isHub = isHubDevice(device);
+  const failed = !isHub && isDeviceConnectionFailed(device);
   const room = getDisplayRoom(device.room);
   const status = getDeviceStatus(device);
   const sensitiveManaged = getSensitiveApplianceEnabled(device.id);
   const statusClass = statusClassOf(status);
+  // 허브는 dB 줄을 표시하지 않는다(소음 측정 대상이 아님).
+  const dbLine = isHub
+    ? ''
+    : `<p data-db-for="${escapeHtml(device.id)}">${escapeHtml(String(device.decibel))} dB</p>`;
   return `
     <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.deviceName)} (${escapeHtml(room)}, ${escapeHtml(status)}) 기기 상세" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
       <div class="device-list-picture has-device-icon">
@@ -163,7 +174,7 @@ function deviceCard(device) {
       </div>
       <div class="device-list-meta">
         <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
-        <p data-db-for="${escapeHtml(device.id)}">${escapeHtml(String(device.decibel))} dB</p>
+        ${dbLine}
         <p>${escapeHtml(device.time)}</p>
       </div>
       ${sensitiveManaged ? '<span class="device-sensitive-pill"><span></span>민감 관리 중</span>' : ''}
@@ -178,7 +189,7 @@ function deviceCard(device) {
 export async function renderDeviceListPage() {
   deviceRows = await loadDeviceRows();
   const allDevices = getAllDeviceRows();
-  const failedCount = allDevices.filter(isDeviceConnectionFailed).length;
+  const failedCount = allDevices.filter((d) => !isHubDevice(d) && isDeviceConnectionFailed(d)).length;
   const onlineCount = allDevices.length - failedCount;
   const attentionCopy =
     failedCount === 0
@@ -259,7 +270,7 @@ async function pollDeviceDecibels() {
 export function mountDeviceListPage({ navigate } = {}) {
   cleanupDeviceListPage();
   let allDevices = getAllDeviceRows();
-  let failedDevices = allDevices.filter(isDeviceConnectionFailed).map(getDeviceFailurePayload);
+  let failedDevices = allDevices.filter((d) => !isHubDevice(d) && isDeviceConnectionFailed(d)).map(getDeviceFailurePayload);
   const popupController = mountDeviceConnectionFailurePopup({ navigate });
   popupCleanup = popupController.cleanup;
   const addPopupController = mountDeviceAddPopup({
@@ -279,7 +290,7 @@ export function mountDeviceListPage({ navigate } = {}) {
 
   const refreshDeviceState = () => {
     allDevices = getAllDeviceRows();
-    failedDevices = allDevices.filter(isDeviceConnectionFailed).map(getDeviceFailurePayload);
+    failedDevices = allDevices.filter((d) => !isHubDevice(d) && isDeviceConnectionFailed(d)).map(getDeviceFailurePayload);
     failedDeviceMap = new Map(failedDevices.map((device) => [device.id, device]));
 
     const onlineCount = allDevices.length - failedDevices.length;
