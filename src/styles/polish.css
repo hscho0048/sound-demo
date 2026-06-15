@@ -4926,6 +4926,11 @@ body,
   right: auto;
 }
 
+/* 기기 상세: 세로 중앙 → 상단 정렬 */
+.device-detail-page {
+  align-content: start;
+}
+
 /* 기기 삭제 = 쓰레기통 아이콘 (상세 상단바 우측 + 목록 카드 사진 위) */
 .device-detail-page .device-detail-topbar {
   justify-content: space-between;
@@ -4957,12 +4962,12 @@ body,
 }
 .device-card-delete {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
+  bottom: 14px;
+  right: 16px;
   display: inline-grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 0;
   border-radius: 8px;

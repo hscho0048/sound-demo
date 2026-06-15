@@ -154,9 +154,6 @@ function deviceCard(device) {
       <div class="device-list-picture has-device-icon">
         ${getDeviceIcon(device.deviceName)}
         <span class="device-conn-dot ${statusClass}"></span>
-        <button type="button" class="device-card-delete" data-device-delete data-device-id="${escapeHtml(device.id)}" aria-label="기기 삭제" title="기기 삭제">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-        </button>
       </div>
       <div class="device-list-meta">
         <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
@@ -165,6 +162,9 @@ function deviceCard(device) {
       </div>
       ${sensitiveManaged ? '<span class="device-sensitive-pill"><span></span>민감 관리 중</span>' : ''}
       <span class="device-detail-icon" aria-hidden="true">&#8594;</span>
+      <button type="button" class="device-card-delete" data-device-delete data-device-id="${escapeHtml(device.id)}" aria-label="기기 삭제" title="기기 삭제">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </button>
     </a>
   `;
 }
