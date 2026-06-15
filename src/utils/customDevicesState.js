@@ -68,3 +68,11 @@ export function addCustomDevice(device) {
   writeDevices(devices);
   return device;
 }
+
+export function removeCustomDevice(id) {
+  writeDevices(readDevices().filter((device) => device.id !== id));
+}
+
+export function isCustomDevice(id) {
+  return typeof id === 'string' && id.startsWith('custom-');
+}

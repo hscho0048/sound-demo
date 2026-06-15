@@ -4926,6 +4926,34 @@ body,
   right: auto;
 }
 
+/* 기기 삭제 카드/버튼 */
+.device-delete-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.device-delete-button {
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 12px;
+  background: #e0556b;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.16s ease;
+}
+.device-delete-button:hover {
+  background: #c8455a;
+}
+.device-delete-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 /* 데스크톱 세로 반응형: 사이드바 고정 + 본문만 세로 스크롤 (작은 높이에서도 내용 잘림 없이 스크롤) */
 @media (min-width: 768px) {
   .app-shell--desktop {

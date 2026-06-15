@@ -6,7 +6,8 @@ import {
 } from '../utils/sensitiveApplianceState.js';
 import { getCurrentHomeStatus, getNoiseEvents } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
-import { getRuntimeSettings } from '../api/deviceApi.js';
+import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
+import { removeCustomDevice, isCustomDevice } from '../utils/customDevicesState.js';
 
 let modelSceneController = null;
 
@@ -208,19 +209,27 @@ export async function renderDeviceDetailPage({ params }) {
             <span class="device-sensitive-toggle__label">${sensitiveManaged ? 'ON' : 'OFF'}</span>
           </button>
         </section>
+
+        <section class="device-detail-card device-delete-card">
+          <div class="device-sensitive-card__copy">
+            <h2>기기 삭제</h2>
+            <p>이 기기와 관련된 민감가전 설정이 함께 삭제됩니다. 되돌릴 수 없습니다.</p>
+          </div>
+          <button type="button" class="device-delete-button" data-device-delete data-device-id="${escapeHtml(deviceId)}">기기 삭제</button>
+        </section>
       </div>
     </section>
   `;
 }
 
-export function mountDeviceDetailPage() {
-  const viewer = document.querySelector('#device-detail-model-viewer');
-  if (!viewer) return;
-
+export function mountDeviceDetailPage({ navigate } = {}) {
   cleanupDeviceDetailPage();
-  modelSceneController = createDeviceDetailModelScene(viewer, {
-    modelType: viewer.dataset.modelType || 'washer'
-  });
+  const viewer = document.querySelector('#device-detail-model-viewer');
+  if (viewer) {
+    modelSceneController = createDeviceDetailModelScene(viewer, {
+      modelType: viewer.dataset.modelType || 'washer'
+    });
+  }
 
   const toggle = document.querySelector('[data-sensitive-toggle]');
   toggle?.addEventListener('click', () => {
@@ -231,6 +240,26 @@ export function mountDeviceDetailPage() {
 
     const label = toggle.querySelector('.device-sensitive-toggle__label');
     if (label) label.textContent = enabled ? 'ON' : 'OFF';
+  });
+
+  const deleteBtn = document.querySelector('[data-device-delete]');
+  deleteBtn?.addEventListener('click', async () => {
+    const id = deleteBtn.dataset.deviceId;
+    if (!window.confirm('이 기기를 삭제할까요? 되돌릴 수 없습니다.')) return;
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = '삭제 중...';
+    try {
+      if (isCustomDevice(id)) {
+        removeCustomDevice(id);
+      } else {
+        await deleteUserDevice(id);
+      }
+      navigate?.('#/devices');
+    } catch (error) {
+      deleteBtn.disabled = false;
+      deleteBtn.textContent = '기기 삭제';
+      window.alert(`기기 삭제 실패: ${error.message}`);
+    }
   });
 }
 

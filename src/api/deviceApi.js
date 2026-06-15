@@ -41,6 +41,14 @@ export async function registerDevice(payload) {
     .catch((error) => withApiFallback(error, () => ({ id: `dev-local-${Date.now()}`, ...payload, connected: false }), 'device registration'));
 }
 
+// 사용자 등록 기기 삭제 (DELETE /api/user-devices/{id}). 실패 시 예외를 던져 호출부에서 처리.
+export async function deleteUserDevice(registeredDeviceId) {
+  if (isMockApiEnabled()) {
+    return { deleted: true };
+  }
+  return request(`/api/user-devices/${encodeURIComponent(registeredDeviceId)}`, { method: 'DELETE' });
+}
+
 export async function getRuntimeSettings(deviceId) {
   if (isMockApiEnabled()) {
     return {
