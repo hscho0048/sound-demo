@@ -1,5 +1,9 @@
 import { createDeviceDetailModelScene } from '../three/deviceDetailModelScene.js';
 import { escapeHtml } from '../utils/html.js';
+import {
+  getSensitiveApplianceEnabled,
+  setSensitiveApplianceEnabled
+} from '../utils/sensitiveApplianceState.js';
 
 let modelSceneController = null;
 
@@ -88,6 +92,7 @@ export async function renderDeviceDetailPage({ params }) {
   const detail = getDetailConfig(deviceId);
   const status = getDeviceStatus(detail);
   const statusClass = getDeviceStatusClass(status);
+  const sensitiveManaged = getSensitiveApplianceEnabled(deviceId);
 
   return `
     <section class="page device-detail-page" aria-label="기기 상세 화면">
@@ -135,6 +140,26 @@ export async function renderDeviceDetailPage({ params }) {
           <p>${escapeHtml(detail.recommendation)}</p>
           <button type="button">규칙 적용</button>
         </section>
+
+        <section class="device-detail-card device-sensitive-card">
+          <div class="device-sensitive-card__copy">
+            <h2>민감 가전 관리</h2>
+            <p>이 기기를 민감 관리 대상으로 지정하면<br>목록 카드에 관리 상태가 표시되며, 저소음 기반 작동이 시작됩니다.</p>
+          </div>
+          <button
+            class="device-sensitive-toggle ${sensitiveManaged ? 'is-on' : ''}"
+            type="button"
+            role="switch"
+            aria-checked="${sensitiveManaged ? 'true' : 'false'}"
+            data-sensitive-toggle
+            data-device-id="${escapeHtml(deviceId)}"
+          >
+            <span class="device-sensitive-toggle__track" aria-hidden="true">
+              <span></span>
+            </span>
+            <span class="device-sensitive-toggle__label">${sensitiveManaged ? 'ON' : 'OFF'}</span>
+          </button>
+        </section>
       </div>
     </section>
   `;
@@ -147,6 +172,17 @@ export function mountDeviceDetailPage() {
   cleanupDeviceDetailPage();
   modelSceneController = createDeviceDetailModelScene(viewer, {
     modelType: viewer.dataset.modelType || 'washer'
+  });
+
+  const toggle = document.querySelector('[data-sensitive-toggle]');
+  toggle?.addEventListener('click', () => {
+    const enabled = !toggle.classList.contains('is-on');
+    setSensitiveApplianceEnabled(toggle.dataset.deviceId, enabled);
+    toggle.classList.toggle('is-on', enabled);
+    toggle.setAttribute('aria-checked', enabled ? 'true' : 'false');
+
+    const label = toggle.querySelector('.device-sensitive-toggle__label');
+    if (label) label.textContent = enabled ? 'ON' : 'OFF';
   });
 }
 

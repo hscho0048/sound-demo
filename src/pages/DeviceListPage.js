@@ -1,10 +1,16 @@
 import { escapeHtml } from '../utils/html.js';
 import { getDeviceIcon } from '../utils/deviceIcons.js';
+import { addCustomDevice, getCustomDevices } from '../utils/customDevicesState.js';
+import {
+  getSensitiveApplianceEnabled,
+  setSensitiveApplianceEnabled
+} from '../utils/sensitiveApplianceState.js';
 import {
   getDeviceFailurePayload,
   isDeviceConnectionFailed,
   mountDeviceConnectionFailurePopup
 } from './DeviceConnectionFailurePopup.js';
+import { mountDeviceAddPopup } from './DeviceAddPopup.js';
 
 const deviceRows = [
   { id: 'washer-main', deviceName: '세탁기', room: 'Laundry Area', decibel: 71, time: '12:30' },
@@ -14,6 +20,10 @@ const deviceRows = [
   { id: 'robot-kitchen-2', deviceName: '식기세척기', room: 'Kitchen', decibel: 64, time: '12:10' },
   { id: 'hub-study-1', deviceName: 'LG 허브', room: 'Study', decibel: 19, time: '11:52' }
 ];
+
+function getAllDeviceRows() {
+  return [...deviceRows, ...getCustomDevices()];
+}
 
 const WARNING_DECIBEL_THRESHOLD = 70;
 const ROOM_OPTIONS = ['전체 공간', '거실', '침실', '세탁실', '주방'];
@@ -66,6 +76,7 @@ function deviceCard(device) {
   const failed = isDeviceConnectionFailed(device);
   const room = getDisplayRoom(device.room);
   const status = getDeviceStatus(device);
+  const sensitiveManaged = getSensitiveApplianceEnabled(device.id);
   const statusClass =
     status === '주의' || status === '二쇱쓽'
       ? 'is-warning'
@@ -83,14 +94,16 @@ function deviceCard(device) {
         <p>${escapeHtml(device.decibel)} dB</p>
         <p>${escapeHtml(device.time)}</p>
       </div>
+      ${sensitiveManaged ? '<span class="device-sensitive-pill"><span></span>민감 관리 중</span>' : ''}
       <span class="device-detail-icon" aria-hidden="true">&#8594;</span>
     </a>
   `;
 }
 
 export async function renderDeviceListPage() {
-  const failedCount = deviceRows.filter(isDeviceConnectionFailed).length;
-  const onlineCount = deviceRows.length - failedCount;
+  const allDevices = getAllDeviceRows();
+  const failedCount = allDevices.filter(isDeviceConnectionFailed).length;
+  const onlineCount = allDevices.length - failedCount;
   const attentionCopy =
     failedCount === 1 ? '연결 확인이 필요한 기기가 1대 있습니다.' : `연결 확인이 필요한 기기가 ${failedCount}대 있습니다.`;
 
@@ -120,7 +133,7 @@ export async function renderDeviceListPage() {
       </section>
 
       <section class="device-list-grid" aria-label="등록된 기기" data-device-list-grid>
-        ${deviceRows.map(deviceCard).join('')}
+        ${allDevices.map(deviceCard).join('')}
       </section>
     </section>
   `;
@@ -128,21 +141,53 @@ export async function renderDeviceListPage() {
 
 let popupCleanup = null;
 let filterCleanup = null;
+let addPopupCleanup = null;
 
 export function mountDeviceListPage({ navigate } = {}) {
   cleanupDeviceListPage();
-  const failedDevices = deviceRows.filter(isDeviceConnectionFailed).map(getDeviceFailurePayload);
+  let allDevices = getAllDeviceRows();
+  let failedDevices = allDevices.filter(isDeviceConnectionFailed).map(getDeviceFailurePayload);
   const popupController = mountDeviceConnectionFailurePopup({ navigate });
   popupCleanup = popupController.cleanup;
-  const failedDeviceMap = new Map(failedDevices.map((device) => [device.id, device]));
+  const addPopupController = mountDeviceAddPopup({
+    onAdd: ({ device, sensitiveManaged }) => {
+      addCustomDevice(device);
+      setSensitiveApplianceEnabled(device.id, sensitiveManaged);
+      renderFilteredDevices();
+    }
+  });
+  addPopupCleanup = addPopupController.cleanup;
+  let failedDeviceMap = new Map(failedDevices.map((device) => [device.id, device]));
   const filterState = {
     room: '전체 공간',
     status: '전체 상태',
     search: ''
   };
 
+  const refreshDeviceState = () => {
+    allDevices = getAllDeviceRows();
+    failedDevices = allDevices.filter(isDeviceConnectionFailed).map(getDeviceFailurePayload);
+    failedDeviceMap = new Map(failedDevices.map((device) => [device.id, device]));
+
+    const onlineCount = allDevices.length - failedDevices.length;
+    const summary = document.querySelector('.device-list-heading p');
+    if (summary) summary.textContent = `총 ${allDevices.length}대 - ${onlineCount}대 연결됨 - ${failedDevices.length}대 연결 필요`;
+
+    const warningCopy = document.querySelector('.device-warning-banner p');
+    if (warningCopy) {
+      warningCopy.textContent =
+        failedDevices.length === 1
+          ? '연결 확인이 필요한 기기가 1대 있습니다.'
+          : `연결 확인이 필요한 기기가 ${failedDevices.length}대 있습니다.`;
+    }
+  };
+
   document.querySelector('.device-warning-banner button')?.addEventListener('click', () => {
     if (failedDevices[0]) popupController.openPopup(failedDevices[0]);
+  });
+
+  document.querySelector('.device-add-button')?.addEventListener('click', () => {
+    addPopupController.openPopup();
   });
 
   const bindDeviceFailureLinks = () => {
@@ -159,7 +204,9 @@ export function mountDeviceListPage({ navigate } = {}) {
     const grid = document.querySelector('[data-device-list-grid]');
     if (!grid) return;
 
-    const filteredDevices = deviceRows.filter((device) => {
+    refreshDeviceState();
+
+    const filteredDevices = allDevices.filter((device) => {
       const roomMatched =
         filterState.room === '전체 공간' || getDisplayRoom(device.room) === filterState.room;
       const statusMatched =
@@ -223,6 +270,7 @@ export function mountDeviceListPage({ navigate } = {}) {
   filterCleanup = () => document.removeEventListener('click', closeFilterMenus);
 
   bindDeviceFailureLinks();
+  refreshDeviceState();
 
   if (failedDevices[0]) {
     popupController.openPopup(failedDevices[0]);
@@ -232,6 +280,8 @@ export function mountDeviceListPage({ navigate } = {}) {
 export function cleanupDeviceListPage() {
   popupCleanup?.();
   popupCleanup = null;
+  addPopupCleanup?.();
+  addPopupCleanup = null;
   filterCleanup?.();
   filterCleanup = null;
 }
