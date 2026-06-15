@@ -190,28 +190,37 @@ body,
 }
 
 .dashboard-desktop-title {
-  margin: 0;
+  margin-left: 0;
+  margin-right: auto;
   color: var(--ink);
   font-size: clamp(30px, 2.5vw, 36px);
   line-height: 1.08;
   letter-spacing: 0;
+  text-align: left;
 }
 
 /* --- Page-specific header placement --- */
-.dashboard-household-header,
-.device-list-header {
-  width: min(100%, var(--ui-content-max));
-  margin: 0 auto 18px;
+.dashboard-household-header {
+  width: 100%;
+  margin: 0 0 18px;
   padding: 0 var(--ui-page-pad-x);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 24px;
+  border-bottom: 0 !important;
   background: transparent;
 }
 
-.dashboard-household-header {
-  border-bottom: 0 !important;
+.device-list-header {
+  width: min(100%, var(--ui-content-max));
+  margin: 0 auto 18px 0;
+  padding: 0 var(--ui-page-pad-x);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  background: transparent;
 }
 
 .dashboard-mobile-title {
@@ -250,15 +259,49 @@ body,
   background: transparent !important;
 }
 
-.basic-report-header,
 .reaction-history-header,
 .gpt-detail-header,
-.settings-page-header,
-.profile-page-header,
-.system-page-header,
 .page-header {
   width: min(100%, var(--ui-content-max));
   margin: 0 auto 24px;
+  padding: 0 var(--ui-page-pad-x);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title actions"
+    "copy actions";
+  align-items: start;
+  gap: 10px 24px;
+  background: transparent;
+}
+
+.settings-page-header {
+  width: 100%;
+  margin: 0 0 24px;
+  padding: 0 0 0 20px;
+  display: block;
+  background: transparent;
+}
+
+.profile-page-header {
+  width: 100%;
+  margin: 0 0 24px;
+  padding: 0 0 0 20px;
+  display: block;
+  background: transparent;
+}
+
+.system-page-header {
+  width: 100%;
+  margin: 0 0 24px;
+  padding: 0 0 0 20px;
+  display: block;
+  background: transparent;
+}
+
+.basic-report-header {
+  width: min(100%, var(--ui-content-max));
+  margin: 0 auto 24px 0;
   padding: 0 var(--ui-page-pad-x);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -774,10 +817,14 @@ button:active,
 }
 
 .basic-report-page .basic-report-heading {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 14px;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.basic-report-page .basic-report-heading > h1,
+.basic-report-page .basic-report-heading > p {
+  grid-area: auto;
 }
 
 .basic-report-page .basic-report-header h1 {
@@ -787,6 +834,7 @@ button:active,
 .basic-report-page .basic-report-header p {
   max-width: none;
   margin: 0;
+  padding-bottom: 6px;
   color: #6b7280;
   font-size: 15px;
   line-height: 1.4;
@@ -1713,6 +1761,8 @@ button:active,
 }
 
 .device-list-page .device-add-button {
+  margin-left: auto;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;

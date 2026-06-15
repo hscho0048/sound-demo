@@ -804,9 +804,10 @@ input[type="checkbox"] { width: auto; }
 
 .dashboard-household-header {
   display: flex;
+  justify-content: flex-start;
   align-items: center;
   min-height: 109px;
-  padding: 0 37px;
+  padding: 0 12px;
   border-bottom: 0.1px solid var(--control-bg);
   background: var(--surface-muted);
 }
@@ -817,6 +818,7 @@ input[type="checkbox"] { width: auto; }
   font-size: 26px;
   line-height: 1.15;
   letter-spacing: 0;
+  text-align: left;
 }
 
 .dashboard-main-grid {
@@ -1185,7 +1187,7 @@ input[type="checkbox"] { width: auto; }
 .device-list-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 24px;
   margin-bottom: 28px;
 }
@@ -1213,6 +1215,8 @@ input[type="checkbox"] { width: auto; }
 }
 
 .device-add-button {
+  margin-left: auto;
+  flex: 0 0 auto;
   min-width: 201px;
   height: 62px;
   border: 0;
@@ -1616,6 +1620,12 @@ input[type="checkbox"] { width: auto; }
   margin-bottom: 28px;
 }
 
+.basic-report-heading {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
 .basic-report-header h1 {
   margin: 0;
   color: #111827;
@@ -1627,6 +1637,7 @@ input[type="checkbox"] { width: auto; }
 .basic-report-header p {
   max-width: 615px;
   margin: 4px 0 0;
+  padding-bottom: 6px;
   color: #4b5563;
   font-size: 25px;
   line-height: 1.5;
@@ -5036,14 +5047,33 @@ input[type="checkbox"] { width: auto; }
 .basic-report-header,
 .reaction-history-header,
 .gpt-detail-header,
-.settings-page-header,
-.profile-page-header,
-.system-page-header,
 .three-view-header,
 .device-detail-topbar {
   width: min(100%, var(--ui-content-max));
+  margin-left: 0;
   margin-right: auto;
   margin-bottom: clamp(20px, 2.4vw, 34px);
+}
+
+.settings-page-header {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 20px;
+}
+
+.profile-page-header {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 20px;
+}
+
+.system-page-header {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 20px;
 }
 
 .device-list-header h1,
