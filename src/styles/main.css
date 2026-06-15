@@ -935,8 +935,6 @@ input[type="checkbox"] { width: auto; }
   padding: 24px 38px 18px;
   overflow: hidden;
   cursor: pointer;
-  /* 우측 요약 컬럼이 길어져도 3D 카드는 늘어나지 않고 상단에 고정. */
-  align-self: start;
 }
 
 .dashboard-home-card:focus-visible {
@@ -990,11 +988,7 @@ input[type="checkbox"] { width: auto; }
 
 .dashboard-summary-column {
   display: grid;
-  /* 실내환경/소음상태는 기존 높이를 유지하고, 그 아래 일일리포트·좋아요·불편해요·
-     감지된 소리 카드를 자동 행으로 모두 노출한다(데스크톱에서도 반응 버튼 사용 가능).
-     컬럼이 길어지면 본문이 세로 스크롤된다. */
-  grid-template-rows: 204px 184px auto;
-  grid-auto-rows: min-content;
+  grid-template-rows: 204px 184px minmax(0, 1fr);
   gap: 16px;
   min-height: 0;
 }

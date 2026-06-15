@@ -12,11 +12,15 @@ const DEFAULT_INTERVAL_MS = 2000;
 export const MEASUREMENT_FRESH_MS = 10000;
 
 // 측정 시각(ISO 문자열)이 최근(threshold 이내)인지. 없거나 오래되면 false → -- 표시.
+// 미래로 찍힌 값(시드/데모 데이터 등)은 실시간 측정이 아니므로 신선으로 보지 않는다.
+// 단, 기기/서버 시계 오차를 감안해 소폭(FUTURE_SKEW_MS)까지는 허용한다.
+const FUTURE_SKEW_MS = 5000;
 export function isFreshTimestamp(timestamp, freshMs = MEASUREMENT_FRESH_MS) {
   if (!timestamp) return false;
   const t = Date.parse(timestamp);
   if (Number.isNaN(t)) return false;
-  return Date.now() - t <= freshMs;
+  const age = Date.now() - t;
+  return age >= -FUTURE_SKEW_MS && age <= freshMs;
 }
 
 export function getMeasurementPollIntervalMs() {

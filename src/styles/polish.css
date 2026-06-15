@@ -4993,6 +4993,12 @@ body,
 /* 모바일(≤640px): 카드 우하단에 디자인된 "Detail" 칩이 있어 쓰레기통과 겹친다.
    중복인 → 화살표는 숨기고, 쓰레기통은 비어 있는 우상단 모서리로 옮긴다. */
 @media (max-width: 640px) {
+  /* 감지된 소리 카드는 mobile-apk.css가 전역 display:none만 하고 모바일에서 다시
+     켜주지 않아 숨겨져 있었다. 모바일에서는 좋아요/불편해요와 함께 노출한다. */
+  .dashboard-detection-card {
+    display: flex;
+  }
+
   .device-list-card .device-detail-icon {
     display: none;
   }
@@ -5089,16 +5095,6 @@ body,
 .gpt-time-row b {
   color: #2b2f3d;
   font-weight: 700;
-}
-
-/* 데스크톱/태블릿(>640px): mobile-apk.css가 좋아요/불편해요·감지된 소리 카드를 전역에서
-   숨기고 모바일에서만 다시 보여준다. 타우리(데스크톱)에서도 반응 버튼을 쓸 수 있도록
-   이 카드들을 다시 노출한다. (.dashboard-info-card 는 flex column) */
-@media (min-width: 641px) {
-  .dashboard-reaction-card,
-  .dashboard-detection-card {
-    display: flex;
-  }
 }
 
 /* 데스크톱 세로 반응형: 사이드바 고정 + 본문만 세로 스크롤 (작은 높이에서도 내용 잘림 없이 스크롤) */
