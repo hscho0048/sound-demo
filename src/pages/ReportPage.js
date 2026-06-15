@@ -138,6 +138,7 @@ export async function renderReportPage() {
           <span class="report-panel-heading">주의</span>
           <span>건조기 부정 반응 최다</span>
           <strong>저소음 모드 권장</strong>
+          <span class="report-caution-action" aria-hidden="true">반응 기록 보기 →</span>
         </span>
       </button>
 

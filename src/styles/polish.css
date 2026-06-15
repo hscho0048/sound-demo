@@ -4516,6 +4516,241 @@ body,
   box-shadow: var(--neo-raised);
 }
 
+/* Unified neumorphic popup treatment */
+.server-failure-backdrop,
+.low-confidence-backdrop {
+  background: rgba(238, 243, 244, 0.56) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.server-failure-modal,
+.low-confidence-modal {
+  width: min(560px, calc(100vw - 32px)) !important;
+  gap: 14px !important;
+  padding: 26px !important;
+  border: 0 !important;
+  border-radius: 20px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised-strong) !important;
+}
+
+.server-failure-modal h2,
+.low-confidence-modal h2 {
+  color: var(--neo-text) !important;
+  font-size: clamp(26px, 2.2vw, 34px) !important;
+  line-height: 1.08 !important;
+}
+
+.server-failure-subtitle,
+.low-confidence-subtitle,
+.low-confidence-message {
+  color: var(--neo-muted) !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.server-failure-card,
+.low-confidence-card {
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.server-failure-actions,
+.low-confidence-actions {
+  gap: 12px !important;
+}
+
+.server-failure-actions button,
+.low-confidence-actions button {
+  min-height: 48px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+}
+
+.server-failure-primary,
+.low-confidence-primary {
+  background: linear-gradient(155deg, #45e2cc 0%, var(--neu-accent) 52%, #15b09b 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    5px 5px 12px #cfcfcf,
+    -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 7px 16px rgba(15, 160, 140, 0.26) !important;
+}
+
+.server-failure-primary:hover,
+.low-confidence-primary:hover {
+  background: linear-gradient(155deg, #4ee9d3 0%, #2bccb6 52%, #19bba4 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    5px 5px 12px #cfcfcf,
+    -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.55),
+    0 9px 20px rgba(15, 160, 140, 0.32) !important;
+}
+
+.server-failure-secondary,
+.low-confidence-secondary {
+  background: var(--neo-surface) !important;
+  color: var(--neo-text) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+/* System status neumorphic refresh */
+.app-workspace:has(.system-status-page) {
+  background: var(--neo-bg, #eef3f4) !important;
+}
+
+.system-status-page {
+  background: transparent !important;
+  color: var(--neo-text) !important;
+}
+
+.system-status-page .system-page-header h1,
+.system-status-page .system-page-header p {
+  color: var(--neo-text) !important;
+}
+
+.system-status-page .system-page-header p {
+  color: var(--neo-muted) !important;
+}
+
+.system-status-shell,
+.system-status-layout {
+  background: transparent !important;
+}
+
+.system-status-page .system-category-panel,
+.system-status-page .system-overall-banner,
+.system-status-page .system-card,
+.system-status-page .system-guide-card,
+.system-status-page .system-error-log {
+  border: 0 !important;
+  border-radius: 18px !important;
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-raised) !important;
+}
+
+.system-status-page .system-overall-banner {
+  box-shadow: var(--neo-raised-strong) !important;
+}
+
+.system-status-page .system-card h2,
+.system-status-page .system-guide-card h2,
+.system-status-page .system-error-log h2,
+.system-status-page .system-overall-banner h2 {
+  color: var(--neo-text) !important;
+}
+
+.system-status-page .system-card-body p,
+.system-status-page .system-guide-card li,
+.system-status-page .system-overall-banner p,
+.system-status-page .system-error-log td {
+  color: var(--neo-muted) !important;
+}
+
+.system-status-page .system-status-pill {
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--neo-surface) !important;
+  color: var(--neo-accent-deep) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.system-status-page .system-status-pill--warn {
+  color: #b65f21 !important;
+}
+
+.system-status-page .system-error-log table {
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important;
+}
+
+.system-status-page .system-error-log th {
+  color: var(--neo-muted) !important;
+}
+
+.system-status-page .system-error-log tbody tr {
+  background: var(--neo-surface) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.system-status-page .system-retry-button {
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: linear-gradient(155deg, #45e2cc 0%, var(--neu-accent) 52%, #15b09b 100%) !important;
+  color: #ffffff !important;
+  box-shadow:
+    5px 5px 12px #cfcfcf,
+    -5px -5px 12px #ffffff,
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 7px 16px rgba(15, 160, 140, 0.26) !important;
+}
+
+/* Report period menu and caution action */
+.basic-report-page .report-period-menu {
+  display: grid;
+  gap: 3px;
+  padding: 6px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--neo-surface) !important;
+  box-shadow:
+    8px 8px 18px rgba(111, 125, 130, 0.24),
+    -7px -7px 16px rgba(255, 255, 255, 0.92),
+    inset 0 1px 1px rgba(255, 255, 255, 0.62) !important;
+}
+
+.basic-report-page .report-period-menu[hidden] {
+  display: none;
+}
+
+.basic-report-page .report-period-menu button {
+  min-height: 38px;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: var(--neo-text) !important;
+  font-weight: 700 !important;
+  text-align: left !important;
+  box-shadow: none !important;
+}
+
+.basic-report-page .report-period-menu button:hover {
+  background: rgba(63, 184, 175, 0.14) !important;
+  color: var(--neo-accent-deep) !important;
+  box-shadow: var(--neo-inset-soft) !important;
+}
+
+.basic-report-page .report-caution-box {
+  position: relative;
+}
+
+.basic-report-page .report-caution-action {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  align-self: center;
+  padding: 6px 14px 0;
+  border-radius: 999px;
+  background: var(--neo-bg, #eef3f4);
+  color: var(--neo-text);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: var(--neo-inset-soft);
+  transform: translateY(3px);
+}
+
 /* ============================================================
    Mobile (≤640px) corrections for the merged mint desktop UI.
    lsj's mint redesign added unscoped desktop card layouts that
