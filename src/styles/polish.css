@@ -4993,12 +4993,6 @@ body,
 /* 모바일(≤640px): 카드 우하단에 디자인된 "Detail" 칩이 있어 쓰레기통과 겹친다.
    중복인 → 화살표는 숨기고, 쓰레기통은 비어 있는 우상단 모서리로 옮긴다. */
 @media (max-width: 640px) {
-  /* 감지된 소리 카드는 mobile-apk.css가 전역 display:none만 하고 모바일에서 다시
-     켜주지 않아 숨겨져 있었다. 모바일에서는 좋아요/불편해요와 함께 노출한다. */
-  .dashboard-detection-card {
-    display: flex;
-  }
-
   /* 리포트 '주요 요약': 모바일에서 가로 스크롤 스트립이라 카드가 잘려 보였다.
      2열 그리드로 바꿔 4개까지 한 화면에 보이고, 그 이상은 세로 스크롤되게 한다. */
   .basic-report-page .report-appliance-grid {
@@ -5010,6 +5004,34 @@ body,
   }
   .basic-report-page .report-appliance-grid::before {
     grid-column: 1 / -1;
+  }
+
+  /* 모바일 프로필: 아바타+이름이 좌우로 붙어 한쪽으로 치우치고 잘려 보였다.
+     세로로 쌓아 가운데 정렬한다. */
+  .profile-page .profile-identity-card {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  /* 시스템 상태: 2열이라 카드 제목(가전 제어 에이전트 등)이 줄바꿈됐다.
+     1열(전체 너비)로 펼쳐 제목이 한 줄에 들어오게 한다. */
+  .system-status-page .system-status-layout {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "overall"
+      "spring"
+      "flutter"
+      "model"
+      "sensor"
+      "guide"
+      "log" !important;
+  }
+  .system-status-page .system-card h2,
+  .system-status-page .system-overall-banner h2 {
+    white-space: nowrap;
   }
 
   .device-list-card .device-detail-icon {

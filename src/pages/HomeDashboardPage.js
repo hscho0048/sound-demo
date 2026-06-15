@@ -80,8 +80,6 @@ function updateDashboardDom(status) {
   set('[data-noise-sub]', d.noiseState.sub);
   const bar = document.querySelector('[data-noise-progress]');
   if (bar) bar.style.width = `${d.noiseProgress}%`;
-  set('[data-detection-source]', d.soundSource);
-  set('[data-detection-db]', `${d.relativeDb} dB`);
 }
 
 export async function renderHomeDashboardPage() {
@@ -92,8 +90,7 @@ export async function renderHomeDashboardPage() {
     return {};
   });
 
-  const { temperature, humidity, syncTime, soundSource, relativeDb, noiseState, noiseProgress } =
-    deriveDashboard(status);
+  const { temperature, humidity, syncTime, noiseState, noiseProgress } = deriveDashboard(status);
 
   return `
     <section class="page thinq-dashboard-page" aria-label="메인 대시보드">
@@ -153,12 +150,6 @@ export async function renderHomeDashboardPage() {
             <p data-reaction-status>피드백 저장</p>
           </button>
 
-          <section class="dashboard-info-card dashboard-detection-card">
-            <h2>감지된 소리</h2>
-            <p>소음원</p>
-            <strong data-detection-source>${escapeHtml(soundSource)}</strong>
-            <p>상대 소음 <b data-detection-db>${relativeDb} dB</b></p>
-          </section>
         </aside>
       </div>
     </section>
