@@ -5151,6 +5151,57 @@ body,
   font-weight: 700;
 }
 
+/* GPT 상세 리포트 본문(마크다운 렌더) — 고정 틀 가독성 */
+.gpt-report-md {
+  font-size: 14px;
+  line-height: 1.65;
+  color: #374151;
+}
+.gpt-report-md > :first-child {
+  margin-top: 0;
+}
+.gpt-report-md h3 {
+  margin: 20px 0 8px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1f2937;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eef1f5;
+}
+.gpt-report-md h3.gpt-report-title {
+  font-size: 18px;
+  border-bottom: 0;
+}
+.gpt-report-md h4 {
+  margin: 14px 0 6px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #2b2f3d;
+}
+.gpt-report-md h5 {
+  margin: 10px 0 4px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #4b5563;
+}
+.gpt-report-md p {
+  margin: 6px 0;
+}
+.gpt-report-md ul {
+  margin: 6px 0 12px;
+  padding-left: 18px;
+}
+.gpt-report-md li {
+  margin: 4px 0;
+}
+.gpt-report-md strong {
+  color: #111827;
+  font-weight: 700;
+}
+.gpt-report-md hr {
+  display: none;
+}
+
 /* 데스크톱 세로 반응형: 사이드바 고정 + 본문만 세로 스크롤 (작은 높이에서도 내용 잘림 없이 스크롤) */
 @media (min-width: 768px) {
   .app-shell--desktop {

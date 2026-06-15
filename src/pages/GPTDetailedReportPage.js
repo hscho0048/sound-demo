@@ -157,6 +157,62 @@ function timeRow(row) {
   `;
 }
 
+// GPT 리포트(마크다운)를 안전하게 HTML로 변환한다. 먼저 전부 escape한 뒤, 우리가
+// 허용하는 마크다운 패턴(##/###/####, **굵게**, - 목록, --- 구분선)만 태그로 바꾼다.
+// → GPT가 HTML을 내보내도 그대로 escape되어 주입 위험이 없다.
+function renderReportMarkdown(markdown) {
+  const escapeText = (s) =>
+    String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inline = (t) => escapeText(t).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  const lines = String(markdown).split(/\r?\n/);
+  let html = '';
+  let inList = false;
+  const closeList = () => {
+    if (inList) {
+      html += '</ul>';
+      inList = false;
+    }
+  };
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (!line) {
+      closeList();
+      continue;
+    }
+    if (/^---+$/.test(line)) {
+      closeList();
+      html += '<hr />';
+      continue;
+    }
+    let m;
+    if ((m = line.match(/^####\s+(.*)/))) {
+      closeList();
+      html += `<h5>${inline(m[1])}</h5>`;
+    } else if ((m = line.match(/^###\s+(.*)/))) {
+      closeList();
+      html += `<h4>${inline(m[1])}</h4>`;
+    } else if ((m = line.match(/^##\s+(.*)/))) {
+      closeList();
+      html += `<h3>${inline(m[1])}</h3>`;
+    } else if ((m = line.match(/^#\s+(.*)/))) {
+      closeList();
+      html += `<h3 class="gpt-report-title">${inline(m[1])}</h3>`;
+    } else if ((m = line.match(/^[-*]\s+(.*)/))) {
+      if (!inList) {
+        html += '<ul>';
+        inList = true;
+      }
+      html += `<li>${inline(m[1])}</li>`;
+    } else {
+      closeList();
+      html += `<p>${inline(line)}</p>`;
+    }
+  }
+  closeList();
+  return html;
+}
+
 export async function renderGPTDetailedReportPage() {
   const data = await loadDetailedReportData();
 
@@ -165,7 +221,7 @@ export async function renderGPTDetailedReportPage() {
     : '<li class="gpt-cause-row">부정 반응 데이터가 아직 없습니다.</li>';
 
   const analysisHtml = data.reportText
-    ? `<p class="gpt-analysis-text">${escapeHtml(data.reportText)}</p>`
+    ? `<div class="gpt-report-md">${renderReportMarkdown(data.reportText)}</div>`
     : '<p class="gpt-analysis-text">아직 생성된 GPT 상세 리포트가 없습니다. 리포트 화면에서 "GPT 리포트 생성하기"를 눌러 주세요.</p>';
 
   const applianceRowsHtml = data.applianceDetail.length
