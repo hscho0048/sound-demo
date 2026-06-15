@@ -1,6 +1,30 @@
 import { bindSettingsTabs, renderSettingsTabs } from '../components/settingsTabs.js';
+import { getMyProfile } from '../api/users.js';
+import { escapeHtml } from '../utils/html.js';
+
+function initialsOf(name) {
+  const trimmed = String(name ?? '').trim();
+  if (!trimmed) return '?';
+  const parts = trimmed.split(/\s+/);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return trimmed.slice(0, 2).toUpperCase();
+}
 
 export async function renderProfilePage() {
+  let profile = null;
+  try {
+    profile = await getMyProfile();
+  } catch (error) {
+    profile = null;
+  }
+  const displayName = profile?.nickname || profile?.displayName || '사용자';
+  const email = profile?.email || '';
+  const handle = email ? `@${email.split('@')[0]}` : `@${displayName}`;
+  const initials = initialsOf(displayName);
+  if (profile?.nickname && typeof window !== 'undefined') {
+    window.localStorage.setItem('soundcare.nickname', profile.nickname);
+  }
+
   return `
     <section class="page profile-page" aria-label="프로필 화면">
       <header class="profile-page-header">
@@ -14,12 +38,12 @@ export async function renderProfilePage() {
         </aside>
 
         <section class="profile-card profile-identity-card" aria-label="프로필 정보">
-          <div class="profile-photo-placeholder" aria-label="Hosung Cho 프로필 사진">
-            <span class="profile-avatar-initials" aria-hidden="true">HC</span>
+          <div class="profile-photo-placeholder" aria-label="${escapeHtml(displayName)} 프로필 사진">
+            <span class="profile-avatar-initials" aria-hidden="true">${escapeHtml(initials)}</span>
           </div>
           <div>
-            <h2>Hosung Cho</h2>
-            <p>@hosung</p>
+            <h2>${escapeHtml(displayName)}</h2>
+            <p>${escapeHtml(handle)}</p>
           </div>
         </section>
 
@@ -27,8 +51,7 @@ export async function renderProfilePage() {
           <div class="profile-summary-section profile-account-card">
             <h2>계정</h2>
             <p>Google 계정 연동됨</p>
-            <p>이메일 인증 완료</p>
-            <p>마지막 로그인: 오늘</p>
+            <p>${email ? escapeHtml(email) : '이메일 미등록'}</p>
           </div>
 
           <div class="profile-summary-divider" aria-hidden="true"></div>

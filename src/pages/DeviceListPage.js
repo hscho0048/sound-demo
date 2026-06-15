@@ -1,23 +1,28 @@
 import { escapeHtml } from '../utils/html.js';
 import { getDeviceIcon } from '../utils/deviceIcons.js';
+import { getCurrentHomeStatus } from '../api/eventApi.js';
+import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
+import { getRuntimeSettings } from '../api/deviceApi.js';
 import {
   getDeviceFailurePayload,
   isDeviceConnectionFailed,
   mountDeviceConnectionFailurePopup
 } from './DeviceConnectionFailurePopup.js';
 
-const deviceRows = [
-  { id: 'washer-main', deviceName: '세탁기', room: 'Laundry Area', decibel: 71, time: '12:30' },
-  { id: 'robot-living', deviceName: '로봇청소기', room: 'Living Room', decibel: 71, time: '12:30' },
-  { id: 'washer-laundry-2', deviceName: '냉장고', room: 'Kitchen', decibel: '--', time: '11:30' },
-  { id: 'washer-laundry-3', deviceName: '에어컨', room: 'Bedroom', decibel: 71, time: '12:30' },
-  { id: 'robot-kitchen-2', deviceName: '식기세척기', room: 'Kitchen', decibel: 64, time: '12:10' },
-  { id: 'hub-study-1', deviceName: 'LG 허브', room: 'Study', decibel: 19, time: '11:52' }
-];
+// 백엔드(DB)에서 채워지는 기기 목록. 하드코딩 더미는 제거되었다.
+let deviceRows = [];
 
 const WARNING_DECIBEL_THRESHOLD = 70;
 const ROOM_OPTIONS = ['전체 공간', '거실', '침실', '세탁실', '주방'];
 const STATUS_OPTIONS = ['전체 상태', '안정', '주의', '연결 필요'];
+
+const SERVICE_LABEL_KO = {
+  robot_vacuum: '로봇청소기',
+  washing_machine: '세탁기',
+  dishwasher: '식기세척기',
+  refrigerator: '냉장고',
+  background: '배경음'
+};
 
 const roomLabelMap = {
   'Living Room': '거실',
@@ -28,7 +33,67 @@ const roomLabelMap = {
 };
 
 function getDisplayRoom(room) {
-  return roomLabelMap[room] ?? room;
+  return roomLabelMap[room] ?? room ?? '방 미지정';
+}
+
+function formatTime(iso) {
+  if (!iso) return '--';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '--';
+  return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+// home-status의 registeredDevices + sensitiveAppliances(라벨 매핑) + 최신 가전 측정값을 합쳐
+// 기기 카드 데이터를 만든다.
+async function loadDeviceRows() {
+  let home;
+  try {
+    home = await getCurrentHomeStatus();
+  } catch (error) {
+    console.warn('[SoundCare] 기기 목록 로드 실패', error);
+    return [];
+  }
+
+  const devices = home?.registeredDevices ?? [];
+  // serviceLabel ↔ userRegisteredDeviceId 매핑은 settings/runtime에 있다
+  // (home-status의 sensitiveAppliances 쿼리에는 userRegisteredDeviceId가 없음).
+  let runtime = null;
+  try {
+    runtime = await getRuntimeSettings();
+  } catch (error) {
+    runtime = null;
+  }
+  const labelByDevice = new Map(
+    (runtime?.sensitiveAppliances ?? []).map((s) => [s.userRegisteredDeviceId, s.serviceLabel])
+  );
+
+  let measurements = [];
+  try {
+    measurements = await getApplianceMeasurements({ limit: 100 });
+  } catch (error) {
+    measurements = [];
+  }
+  const latestByLabel = new Map();
+  for (const m of measurements ?? []) {
+    const label = m.serviceLabel ?? m.applianceType;
+    if (label && !latestByLabel.has(label)) latestByLabel.set(label, m);
+  }
+
+  return devices.map((device) => {
+    const id = device.registeredDeviceId ?? device.id;
+    const label = labelByDevice.get(id);
+    const measurement = label ? latestByLabel.get(label) : null;
+    const db = measurement
+      ? Math.round(Number(measurement.decibelMax ?? measurement.decibelAvg ?? measurement.relativeDb))
+      : null;
+    return {
+      id,
+      deviceName: (label && SERVICE_LABEL_KO[label]) || device.name || '기기',
+      room: device.roomName ?? '방 미지정',
+      decibel: db != null && Number.isFinite(db) ? db : '--',
+      time: measurement ? formatTime(measurement.measuredAt ?? measurement.createdAt) : '--'
+    };
+  });
 }
 
 function getDeviceStatus(device) {
@@ -39,6 +104,12 @@ function getDeviceStatus(device) {
   if (decibel >= WARNING_DECIBEL_THRESHOLD) return '주의';
 
   return '안정';
+}
+
+function statusClassOf(status) {
+  if (status === '주의') return 'is-warning';
+  if (status === '연결 필요') return 'is-connection';
+  return 'is-stable';
 }
 
 function filterMenu(name, options) {
@@ -66,12 +137,7 @@ function deviceCard(device) {
   const failed = isDeviceConnectionFailed(device);
   const room = getDisplayRoom(device.room);
   const status = getDeviceStatus(device);
-  const statusClass =
-    status === '주의' || status === '二쇱쓽'
-      ? 'is-warning'
-      : status === '연결 필요' || status === '?곌껐 ?꾩슂'
-        ? 'is-connection'
-        : 'is-stable';
+  const statusClass = statusClassOf(status);
   return `
     <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.deviceName)} (${escapeHtml(room)}, ${escapeHtml(status)}) 기기 상세" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
       <div class="device-list-picture has-device-icon" aria-hidden="true">
@@ -80,7 +146,7 @@ function deviceCard(device) {
       </div>
       <div class="device-list-meta">
         <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
-        <p>${escapeHtml(device.decibel)} dB</p>
+        <p>${escapeHtml(String(device.decibel))} dB</p>
         <p>${escapeHtml(device.time)}</p>
       </div>
       <span class="device-detail-icon" aria-hidden="true">&#8594;</span>
@@ -89,10 +155,19 @@ function deviceCard(device) {
 }
 
 export async function renderDeviceListPage() {
+  deviceRows = await loadDeviceRows();
   const failedCount = deviceRows.filter(isDeviceConnectionFailed).length;
   const onlineCount = deviceRows.length - failedCount;
   const attentionCopy =
-    failedCount === 1 ? '연결 확인이 필요한 기기가 1대 있습니다.' : `연결 확인이 필요한 기기가 ${failedCount}대 있습니다.`;
+    failedCount === 0
+      ? '모든 기기가 정상 연결되어 있습니다.'
+      : failedCount === 1
+        ? '연결 확인이 필요한 기기가 1대 있습니다.'
+        : `연결 확인이 필요한 기기가 ${failedCount}대 있습니다.`;
+
+  const grid = deviceRows.length
+    ? deviceRows.map(deviceCard).join('')
+    : '<p class="device-list-empty">등록된 기기가 없습니다. Tauri/Web 또는 백엔드에서 기기를 먼저 등록하세요.</p>';
 
   return `
     <section class="page device-list-page" aria-label="기기 목록 화면">
@@ -120,7 +195,7 @@ export async function renderDeviceListPage() {
       </section>
 
       <section class="device-list-grid" aria-label="등록된 기기" data-device-list-grid>
-        ${deviceRows.map(deviceCard).join('')}
+        ${grid}
       </section>
     </section>
   `;
@@ -223,10 +298,6 @@ export function mountDeviceListPage({ navigate } = {}) {
   filterCleanup = () => document.removeEventListener('click', closeFilterMenus);
 
   bindDeviceFailureLinks();
-
-  if (failedDevices[0]) {
-    popupController.openPopup(failedDevices[0]);
-  }
 }
 
 export function cleanupDeviceListPage() {

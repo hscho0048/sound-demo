@@ -28,6 +28,10 @@ export async function loginWithGoogle(idToken, profile = {}) {
   if (result?.accessToken) {
     tokenStorage.set(result.accessToken);
   }
+  const nickname = result?.nickname ?? result?.user?.nickname;
+  if (nickname && typeof window !== 'undefined') {
+    window.localStorage.setItem('soundcare.nickname', nickname);
+  }
   return result;
 }
 

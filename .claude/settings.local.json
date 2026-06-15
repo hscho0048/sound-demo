@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node scripts/check-js-syntax.mjs)"
+      "Bash(node scripts/check-js-syntax.mjs)",
+      "Bash(lazygit --version)"
     ]
   }
 }

@@ -2046,3 +2046,38 @@ body,
     white-space: nowrap;
   }
 }
+
+/* === 로그인 화면 반응형 (데스크톱 중앙정렬 + 모바일 카드 오버플로 방지) === */
+.app-shell--login .login-page,
+.app-shell--login .login-window {
+  width: 100% !important;
+  margin-inline: auto !important;
+  padding-inline: 0 !important;
+  box-sizing: border-box;
+}
+.app-shell--login .login-stage {
+  display: grid !important;
+  place-items: center !important;
+  width: 100% !important;
+  padding-inline: 12px !important;
+  box-sizing: border-box;
+}
+.app-shell--login .login-card {
+  width: 100% !important;
+  max-width: 420px !important;
+  margin-inline: auto !important;
+  padding: clamp(18px, 5vw, 32px) !important;
+  box-sizing: border-box;
+}
+.app-shell--login .google-signin-btn {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .app-shell--login .main-content {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+  }
+}

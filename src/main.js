@@ -196,7 +196,9 @@ function mobileBottomNav(currentHash) {
 
 function shell(content, routeTitle) {
   const currentHash = window.location.hash || '#/login';
-  const hideNav = currentHash === '#/login' || currentHash === '#/create-account';
+  // 해시가 #/ 처럼 미매칭이어도 login 라우트로 떨어지므로, 매칭된 라우트 기준으로 네비를 숨긴다.
+  const { route: matchedRoute } = matchRoute(currentHash);
+  const hideNav = matchedRoute.title === 'Login' || matchedRoute.title === 'Create Account';
   const settingsActive = isNavActive(currentHash, settingsNavItem);
 
   if (hideNav) {

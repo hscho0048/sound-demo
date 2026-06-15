@@ -1,77 +1,44 @@
 import { createDeviceDetailModelScene } from '../three/deviceDetailModelScene.js';
 import { escapeHtml } from '../utils/html.js';
+import { getCurrentHomeStatus, getNoiseEvents } from '../api/eventApi.js';
+import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
+import { getRuntimeSettings } from '../api/deviceApi.js';
 
 let modelSceneController = null;
 
 const WARNING_DECIBEL_THRESHOLD = 70;
 
-const deviceDetails = {
-  'washer-main': {
-    title: '세탁기',
-    modelType: 'washer',
-    modelLabel: '세탁기',
-    serviceLabel: '탈수',
-    noiseLabel: '71 dB',
-    events: ['12:30 세탁 소음 감지 - 71 dB', '12:18 탈수 구간 진입', '12:05 주의 반응 기록', '11:42 측정 데이터 업로드 완료'],
-    recommendation: '야간에는 탈수 시간을 피하고, 반복 소음이 감지되면 세탁 예약 시간을 조정해 보세요.'
-  },
-  'robot-living': {
-    title: '로봇청소기',
-    modelType: 'robot',
-    modelLabel: '로봇청소기',
-    serviceLabel: '미세먼지 흡입',
-    noiseLabel: '71 dB',
-    events: ['12:30 청소 소음 감지 - 71 dB', '12:18 거실 이동 감지', '12:05 긍정 반응 기록', '11:42 측정 데이터 업로드 완료'],
-    recommendation: '22시 이후에는 청소 예약을 피하고, 반복 소음이 감지되면 청소 시작 시간을 늦춰 보세요.'
-  },
-  'washer-laundry-2': {
-    title: '냉장고',
-    modelType: 'refrigerator',
-    modelLabel: '냉장고',
-    serviceLabel: '저소음 모드',
-    noiseLabel: '측정 대기',
-    events: ['11:30 연결 상태 확인 필요', '11:18 냉장고 상태 조회 실패', '11:05 측정값 없음', '10:52 마지막 연결 기록 확인'],
-    recommendation: '냉장고 연결 상태를 확인하고, 측정값이 계속 비어 있으면 기기를 다시 연결해 주세요.'
-  },
-  'washer-laundry-3': {
-    title: '에어컨',
-    modelType: 'washer',
-    modelLabel: '에어컨',
-    serviceLabel: '파워 냉방',
-    noiseLabel: '71 dB',
-    events: ['12:30 에어컨 작동 소음 감지 - 71 dB', '12:18 침실 소음 상승', '12:05 주의 반응 기록', '11:42 측정 데이터 업로드 완료'],
-    recommendation: '취침 시간에는 풍량을 낮추고, 반복 소음이 감지되면 저소음 모드로 전환해 보세요.'
-  },
-  'robot-kitchen-2': {
-    title: '식기세척기',
-    modelType: 'dishwasher',
-    modelLabel: '식기세척기',
-    serviceLabel: '저소음 모드',
-    noiseLabel: '64 dB',
-    events: ['12:10 식기세척기 소음 감지 - 64 dB', '12:02 주방 작동 이벤트 기록', '11:55 안정 상태 유지', '11:40 측정 데이터 업로드 완료'],
-    recommendation: '식사 직후 사용은 유지하되, 야간에는 예약 시작 시간을 앞당기면 소음 부담을 줄일 수 있습니다.'
-  },
-  'hub-study-1': {
-    title: 'LG 허브',
-    modelType: 'robot',
-    modelLabel: 'LG 허브',
-    serviceLabel: 'LG 허브',
-    noiseLabel: '19 dB',
-    events: ['11:52 허브 상태 감지 - 19 dB', '11:40 작업실 연결 안정', '11:25 안정 상태 유지', '11:10 측정 데이터 업로드 완료'],
-    recommendation: '현재 소음은 안정적입니다. 연결 상태만 주기적으로 확인하면 됩니다.'
-  }
+const SERVICE_LABEL_KO = {
+  robot_vacuum: '로봇청소기',
+  washing_machine: '세탁기',
+  dishwasher: '식기세척기',
+  refrigerator: '냉장고',
+  background: '배경음'
 };
 
-function getDetailConfig(deviceId) {
-  if (deviceDetails[deviceId]) return deviceDetails[deviceId];
-  if (deviceId?.includes('robot')) return deviceDetails['robot-living'];
-  if (deviceId?.includes('fridge') || deviceId?.includes('refrigerator')) return deviceDetails['washer-laundry-2'];
-  if (deviceId?.includes('dish')) return deviceDetails['robot-kitchen-2'];
-  return deviceDetails['washer-main'];
+const SERVICE_LABEL_MODEL = {
+  robot_vacuum: 'robot',
+  washing_machine: 'washer',
+  dishwasher: 'dishwasher',
+  refrigerator: 'refrigerator'
+};
+
+const RECOMMENDATION = {
+  robot_vacuum: '22시 이후에는 청소 예약을 피하고, 반복 소음이 감지되면 청소 시작 시간을 늦춰 보세요.',
+  washing_machine: '야간에는 탈수 시간을 피하고, 반복 소음이 감지되면 세탁 예약 시간을 조정해 보세요.',
+  dishwasher: '식사 직후 사용은 유지하되, 야간에는 예약 시작 시간을 앞당기면 소음 부담을 줄일 수 있습니다.',
+  refrigerator: '냉장고는 경고·공지 대상입니다. 측정값이 계속 비어 있으면 연결 상태를 확인해 주세요.'
+};
+
+function formatTime(iso) {
+  if (!iso) return '--';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '--';
+  return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
-function getDeviceStatus(detail) {
-  const decibel = Number.parseFloat(detail.noiseLabel);
+function getDeviceStatus(noiseLabel) {
+  const decibel = Number.parseFloat(noiseLabel);
   if (!Number.isFinite(decibel)) return '연결 필요';
   if (decibel >= WARNING_DECIBEL_THRESHOLD) return '주의';
   return '안정';
@@ -83,10 +50,91 @@ function getDeviceStatusClass(status) {
   return 'measurement-status--stable';
 }
 
+// 백엔드(DB)에서 기기 상세 데이터를 조립한다. 하드코딩 더미는 제거되었다.
+async function loadDeviceDetail(deviceId) {
+  const home = await getCurrentHomeStatus();
+  const devices = home?.registeredDevices ?? [];
+  const device = devices.find((d) => (d.registeredDeviceId ?? d.id) === deviceId) ?? null;
+  // serviceLabel 매핑은 settings/runtime에서 (home-status에는 userRegisteredDeviceId가 없음)
+  let runtime = null;
+  try {
+    runtime = await getRuntimeSettings();
+  } catch (error) {
+    runtime = null;
+  }
+  const label = (runtime?.sensitiveAppliances ?? []).find(
+    (s) => s.userRegisteredDeviceId === deviceId
+  )?.serviceLabel;
+
+  const title = (label && SERVICE_LABEL_KO[label]) || device?.name || '기기';
+  const modelType = (label && SERVICE_LABEL_MODEL[label]) || 'washer';
+
+  let measurements = [];
+  let noiseItems = [];
+  if (label) {
+    try {
+      measurements = (await getApplianceMeasurements({ serviceLabel: label, limit: 10 })) ?? [];
+    } catch (error) {
+      measurements = [];
+    }
+    try {
+      const ne = await getNoiseEvents({ serviceLabel: label, size: 5 });
+      noiseItems = Array.isArray(ne) ? ne : ne?.items ?? [];
+    } catch (error) {
+      noiseItems = [];
+    }
+  }
+
+  const latest = measurements[0] ?? null;
+  const latestDb = latest ? Number(latest.decibelMax ?? latest.decibelAvg ?? latest.relativeDb) : null;
+  const noiseLabel = latestDb != null && Number.isFinite(latestDb) ? `${Math.round(latestDb)} dB` : '측정 대기';
+
+  const events = [];
+  for (const n of noiseItems.slice(0, 4)) {
+    const db = n.decibelMax ?? n.decibelAvg;
+    events.push(`${formatTime(n.createdAt)} 소음 감지${db != null ? ` - ${Math.round(Number(db))} dB` : ''}`);
+  }
+  if (latest) {
+    events.push(`${formatTime(latest.measuredAt ?? latest.createdAt)} 측정값 업로드 (${latest.measurementSource ?? 'ESP32_INMP441'})`);
+  }
+  if (!events.length) {
+    events.push('아직 수집된 측정/소음 이벤트가 없습니다.');
+  }
+
+  return {
+    title,
+    modelType,
+    modelLabel: title,
+    serviceLabel: label ?? '미지정',
+    noiseLabel,
+    roomName: device?.roomName ?? '방 미지정',
+    events,
+    recommendation: (label && RECOMMENDATION[label]) || '현재 소음 데이터를 기준으로 권장 사항을 제공합니다.'
+  };
+}
+
 export async function renderDeviceDetailPage({ params }) {
   const deviceId = decodeURIComponent(params.deviceId ?? '');
-  const detail = getDetailConfig(deviceId);
-  const status = getDeviceStatus(detail);
+
+  let detail;
+  try {
+    detail = await loadDeviceDetail(deviceId);
+  } catch (error) {
+    console.warn('[SoundCare] 기기 상세 로드 실패', error);
+    return `
+      <section class="page device-detail-page" aria-label="기기 상세 화면">
+        <header class="device-detail-topbar">
+          <div class="device-detail-title-group">
+            <a class="device-detail-back" href="#/devices" aria-label="기기 목록으로 돌아가기"><svg class="back-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
+            <h1>기기 상세를 불러올 수 없습니다</h1>
+          </div>
+        </header>
+        <p class="device-list-empty">잠시 후 다시 시도해 주세요.</p>
+      </section>
+    `;
+  }
+
+  const status = getDeviceStatus(detail.noiseLabel);
   const statusClass = getDeviceStatusClass(status);
 
   return `
@@ -94,7 +142,7 @@ export async function renderDeviceDetailPage({ params }) {
       <header class="device-detail-topbar">
         <div class="device-detail-title-group">
           <a class="device-detail-back" href="#/devices" aria-label="기기 목록으로 돌아가기"><svg class="back-arrow-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></a>
-          <p>기기 &gt; ${escapeHtml(detail.title)}</p>
+          <p>기기 &gt; ${escapeHtml(detail.title)} (${escapeHtml(detail.roomName)})</p>
           <h1>${escapeHtml(detail.title)}</h1>
         </div>
       </header>

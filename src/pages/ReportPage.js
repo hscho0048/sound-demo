@@ -1,14 +1,61 @@
-import { requestDetailedReport } from '../api/reportApi.js';
+import { requestDetailedReport, grantGptReportConsent } from '../api/reportApi.js';
+import { fetchReactions } from '../api/reactions.js';
 import { mountGptDetailReportPopUp, renderGptDetailReportPopUp } from './gptDetailReportPopUp.js';
 import { createReportFaceScene } from '../three/reportFaceScene.js';
 import { escapeHtml } from '../utils/html.js';
 
-const applianceReports = [
-  { name: '세탁기', positive: '+1', negative: '-2' },
-  { name: '냉장고', positive: '+5', negative: '-4' },
-  { name: '건조기', positive: '+3', negative: '-10' },
-  { name: '청소기', positive: '+12', negative: '-3' }
-];
+const SERVICE_LABEL_KO = {
+  robot_vacuum: '로봇청소기',
+  washing_machine: '세탁기',
+  dishwasher: '식기세척기',
+  refrigerator: '냉장고',
+  background: '배경음',
+  manual: '수동 입력'
+};
+
+// 백엔드(DB) 반응 데이터에서 집계되는 값들. 하드코딩 더미는 제거되었다.
+let applianceReports = [];
+let reactionSummary = { positive: 0, negative: 0 };
+let sensitivityRanking = [];
+
+async function loadReportData() {
+  let items = [];
+  try {
+    const resp = await fetchReactions({ size: 200 });
+    items = resp?.items ?? [];
+  } catch (error) {
+    console.warn('[SoundCare] 리포트 반응 데이터 로드 실패', error);
+    items = [];
+  }
+
+  const byLabel = new Map();
+  let positive = 0;
+  let negative = 0;
+  for (const r of items) {
+    const label = r.serviceLabel || 'manual';
+    if (!byLabel.has(label)) byLabel.set(label, { positive: 0, negative: 0 });
+    const bucket = byLabel.get(label);
+    if (r.reactionType === 'POSITIVE') {
+      bucket.positive += 1;
+      positive += 1;
+    } else if (r.reactionType === 'NEGATIVE') {
+      bucket.negative += 1;
+      negative += 1;
+    }
+  }
+
+  applianceReports = [...byLabel.entries()].map(([label, count]) => ({
+    name: SERVICE_LABEL_KO[label] || label,
+    positive: `+${count.positive}`,
+    negative: `-${count.negative}`
+  }));
+  reactionSummary = { positive, negative };
+  sensitivityRanking = [...byLabel.entries()]
+    .map(([label, count]) => ({ name: SERVICE_LABEL_KO[label] || label, negative: count.negative }))
+    .filter((row) => row.negative > 0)
+    .sort((a, b) => b.negative - a.negative)
+    .slice(0, 3);
+}
 
 const REPORT_PERIOD_OPTIONS = ['조회 기간', '최근 3일', '최근 1주', '최근 1달'];
 
@@ -84,6 +131,33 @@ function applianceCard(device, index) {
 }
 
 export async function renderReportPage() {
+  await loadReportData();
+
+  const totalReactions = reactionSummary.positive + reactionSummary.negative;
+  const positiveRatio = totalReactions ? Math.round((reactionSummary.positive / totalReactions) * 100) : 0;
+  const negativeRatio = 100 - positiveRatio;
+  const maxNegative = sensitivityRanking[0]?.negative || 1;
+  const rankingBarClasses = ['ranking-bar--danger', 'ranking-bar--orange', 'ranking-bar--yellow'];
+  const rankingHtml = sensitivityRanking.length
+    ? sensitivityRanking
+        .map(
+          (row, index) => `
+            <span role="listitem">
+              <span>${index + 1} ${escapeHtml(row.name)} ${row.negative}</span>
+              <span class="ranking-bar ${rankingBarClasses[index] ?? 'ranking-bar--yellow'}"><span style="width: ${Math.round(
+                (row.negative / maxNegative) * 100
+              )}%"></span></span>
+            </span>
+          `
+        )
+        .join('')
+    : '<span role="listitem"><span>부정 반응 데이터 없음</span></span>';
+  const topNegative = sensitivityRanking[0];
+
+  const applianceGrid = applianceReports.length
+    ? applianceReports.map(applianceCard).join('')
+    : '<p class="device-list-empty">아직 수집된 반응 데이터가 없습니다.</p>';
+
   return `
     <section class="page basic-report-page" aria-label="기본 리포트 화면">
       <header class="basic-report-header">
@@ -95,7 +169,7 @@ export async function renderReportPage() {
       </header>
 
       <section class="report-appliance-grid" aria-label="기기별 반응 카드">
-        ${applianceReports.map(applianceCard).join('')}
+        ${applianceGrid}
       </section>
 
       <button
@@ -107,52 +181,41 @@ export async function renderReportPage() {
         <span class="report-summary-block">
           <span class="report-panel-heading">반응 요약</span>
           <span class="reaction-pill-row">
-            <span class="reaction-pill reaction-pill--positive">긍정 21</span>
-            <span class="reaction-pill reaction-pill--negative">부정 19</span>
+            <span class="reaction-pill reaction-pill--positive">긍정 ${reactionSummary.positive}</span>
+            <span class="reaction-pill reaction-pill--negative">부정 ${reactionSummary.negative}</span>
           </span>
           <span class="reaction-split-bar" aria-hidden="true">
-            <span class="reaction-split-bar__positive"></span>
-            <span class="reaction-split-bar__negative"></span>
+            <span class="reaction-split-bar__positive" style="width: ${positiveRatio}%"></span>
+            <span class="reaction-split-bar__negative" style="width: ${negativeRatio}%"></span>
           </span>
         </span>
 
         <span class="report-ranking-block">
           <span class="report-panel-heading">소음 민감 순위</span>
           <span class="sensitivity-ranking" role="list">
-            <span role="listitem">
-              <span>1 건조기 10</span>
-              <span class="ranking-bar ranking-bar--danger"><span style="width: 100%"></span></span>
-            </span>
-            <span role="listitem">
-              <span>2 냉장고 4</span>
-              <span class="ranking-bar ranking-bar--orange"><span style="width: 38%"></span></span>
-            </span>
-            <span role="listitem">
-              <span>3 청소기 3</span>
-              <span class="ranking-bar ranking-bar--yellow"><span style="width: 30%"></span></span>
-            </span>
+            ${rankingHtml}
           </span>
         </span>
 
         <span class="report-caution-box" aria-label="주의">
           <span class="report-panel-heading">주의</span>
-          <span>건조기 부정 반응 최다</span>
-          <strong>저소음 모드 권장</strong>
+          <span>${topNegative ? `${escapeHtml(topNegative.name)} 부정 반응 최다` : '주의 항목 없음'}</span>
+          <strong>${topNegative ? '저소음 모드 권장' : '안정적입니다'}</strong>
         </span>
       </button>
 
       <section class="report-lower-grid" aria-label="리포트 상세">
         <article class="report-detail-card low-noise-detail-card">
-          <h2><span class="detail-card-icon" aria-hidden="true"></span>저소음 모드 전환 비율 상세</h2>
+          <h2><span class="detail-card-icon" aria-hidden="true"></span>긍정 반응 비율 상세</h2>
           <div class="low-noise-content">
-            <div class="donut-chart" aria-label="저소음 모드 전환 비율 58퍼센트">
-              <strong>58%</strong>
-              <span>전환 비율</span>
+            <div class="donut-chart" aria-label="긍정 반응 비율 ${positiveRatio}퍼센트">
+              <strong>${positiveRatio}%</strong>
+              <span>긍정 비율</span>
             </div>
             <div class="donut-legend">
-              <p><span class="legend-dot legend-dot--red"></span><strong>전환됨</strong><b>58% (29건)</b></p>
-              <p><span class="legend-dot legend-dot--gray"></span><strong>전환되지 않음</strong><b>42% (21건)</b></p>
-              <small>최근 7일 총 이벤트 50건 기준</small>
+              <p><span class="legend-dot legend-dot--red"></span><strong>긍정</strong><b>${positiveRatio}% (${reactionSummary.positive}건)</b></p>
+              <p><span class="legend-dot legend-dot--gray"></span><strong>부정</strong><b>${negativeRatio}% (${reactionSummary.negative}건)</b></p>
+              <small>저장된 반응 총 ${totalReactions}건 기준</small>
             </div>
           </div>
         </article>
@@ -223,13 +286,21 @@ export function mountReportPage({ navigate } = {}) {
   const popupController = mountGptDetailReportPopUp({
     onAgree: async () => {
       const status = document.querySelector('#gpt-report-status');
-      if (status) status.textContent = '상세 리포트를 생성하는 중입니다...';
-      const report = await requestDetailedReport();
-      if (report?.reportId) {
-        window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
+      try {
+        // 1) AI 데이터 사용 동의를 서버에 반영 (users.ai_data_use_consent)
+        if (status) status.textContent = 'AI 데이터 사용 동의를 저장하는 중입니다...';
+        await grantGptReportConsent({ granted: true });
+        // 2) 상세 리포트 생성 요청
+        if (status) status.textContent = '상세 리포트를 생성하는 중입니다...';
+        const report = await requestDetailedReport();
+        if (report?.reportId) {
+          window.localStorage.setItem('soundcare.lastDetailedReportId', report.reportId);
+        }
+        if (status) status.textContent = '상세 리포트가 생성되었습니다.';
+        navigate('#/reports/gpt-detailed');
+      } catch (error) {
+        if (status) status.textContent = `상세 리포트 생성에 실패했습니다: ${error.message}`;
       }
-      if (status) status.textContent = '상세 리포트가 생성되었습니다.';
-      navigate('#/reports/gpt-detailed');
     }
   });
 

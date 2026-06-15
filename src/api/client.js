@@ -4,6 +4,8 @@ export const API_BASE_URL = env.VITE_SOUNDCARE_API_BASE_URL || 'http://localhost
 export const USE_MOCK_API = String(env.VITE_USE_MOCK_API ?? 'false').toLowerCase() === 'true';
 export const USE_API_FALLBACK = String(env.VITE_USE_API_FALLBACK ?? 'false').toLowerCase() === 'true';
 export const TOKEN_STORAGE_KEY = 'soundcare.accessToken';
+// 설정 시 LoginPage가 실제 Google Identity Services 버튼을 렌더링한다.
+export const GOOGLE_CLIENT_ID = env.VITE_GOOGLE_CLIENT_ID || '';
 export const DEV_AUTH_PROFILE = {
   idToken: env.VITE_DEV_AUTH_ID_TOKEN || 'soundcare-tauri-local-dev',
   email: env.VITE_DEV_AUTH_EMAIL || 'tauri.local@soundcare.local',
