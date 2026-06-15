@@ -151,6 +151,9 @@ export async function renderDeviceDetailPage({ params }) {
           <p>기기 &gt; ${escapeHtml(detail.title)} (${escapeHtml(detail.roomName)})</p>
           <h1>${escapeHtml(detail.title)}</h1>
         </div>
+        <button type="button" class="device-delete-icon" data-device-delete data-device-id="${escapeHtml(deviceId)}" aria-label="기기 삭제" title="기기 삭제">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
       </header>
 
       <div class="device-detail-layout">
@@ -209,14 +212,6 @@ export async function renderDeviceDetailPage({ params }) {
             <span class="device-sensitive-toggle__label">${sensitiveManaged ? 'ON' : 'OFF'}</span>
           </button>
         </section>
-
-        <section class="device-detail-card device-delete-card">
-          <div class="device-sensitive-card__copy">
-            <h2>기기 삭제</h2>
-            <p>이 기기와 관련된 민감가전 설정이 함께 삭제됩니다. 되돌릴 수 없습니다.</p>
-          </div>
-          <button type="button" class="device-delete-button" data-device-delete data-device-id="${escapeHtml(deviceId)}">기기 삭제</button>
-        </section>
       </div>
     </section>
   `;
@@ -247,7 +242,6 @@ export function mountDeviceDetailPage({ navigate } = {}) {
     const id = deleteBtn.dataset.deviceId;
     if (!window.confirm('이 기기를 삭제할까요? 되돌릴 수 없습니다.')) return;
     deleteBtn.disabled = true;
-    deleteBtn.textContent = '삭제 중...';
     try {
       if (isCustomDevice(id)) {
         removeCustomDevice(id);
@@ -257,7 +251,6 @@ export function mountDeviceDetailPage({ navigate } = {}) {
       navigate?.('#/devices');
     } catch (error) {
       deleteBtn.disabled = false;
-      deleteBtn.textContent = '기기 삭제';
       window.alert(`기기 삭제 실패: ${error.message}`);
     }
   });

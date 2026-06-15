@@ -1,13 +1,13 @@
 import { escapeHtml } from '../utils/html.js';
 import { getDeviceIcon } from '../utils/deviceIcons.js';
-import { addCustomDevice, getCustomDevices } from '../utils/customDevicesState.js';
+import { addCustomDevice, getCustomDevices, removeCustomDevice, isCustomDevice } from '../utils/customDevicesState.js';
 import {
   getSensitiveApplianceEnabled,
   setSensitiveApplianceEnabled
 } from '../utils/sensitiveApplianceState.js';
 import { getCurrentHomeStatus } from '../api/eventApi.js';
 import { getApplianceMeasurements } from '../api/applianceMeasurementApi.js';
-import { getRuntimeSettings } from '../api/deviceApi.js';
+import { getRuntimeSettings, deleteUserDevice } from '../api/deviceApi.js';
 import {
   getDeviceFailurePayload,
   isDeviceConnectionFailed,
@@ -151,9 +151,12 @@ function deviceCard(device) {
   const statusClass = statusClassOf(status);
   return `
     <a class="device-list-card ${failed ? 'device-list-card--failed' : ''}" href="#/devices/${encodeURIComponent(device.id)}" aria-label="${escapeHtml(device.deviceName)} (${escapeHtml(room)}, ${escapeHtml(status)}) 기기 상세" ${failed ? `data-device-failure="${escapeHtml(device.id)}"` : ''}>
-      <div class="device-list-picture has-device-icon" aria-hidden="true">
+      <div class="device-list-picture has-device-icon">
         ${getDeviceIcon(device.deviceName)}
         <span class="device-conn-dot ${statusClass}"></span>
+        <button type="button" class="device-card-delete" data-device-delete data-device-id="${escapeHtml(device.id)}" aria-label="기기 삭제" title="기기 삭제">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
       </div>
       <div class="device-list-meta">
         <p class="device-list-title-row"><span>${escapeHtml(device.deviceName)}</span><span class="device-status-badge ${statusClass}">${escapeHtml(status)}</span></p>
@@ -275,6 +278,30 @@ export function mountDeviceListPage({ navigate } = {}) {
     });
   };
 
+  const bindDeleteButtons = () => {
+    document.querySelectorAll('[data-device-delete]').forEach((btn) => {
+      btn.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const id = btn.dataset.deviceId;
+        if (!window.confirm('이 기기를 삭제할까요? 되돌릴 수 없습니다.')) return;
+        btn.disabled = true;
+        try {
+          if (isCustomDevice(id)) {
+            removeCustomDevice(id);
+          } else {
+            await deleteUserDevice(id);
+            deviceRows = deviceRows.filter((d) => d.id !== id);
+          }
+          renderFilteredDevices();
+        } catch (error) {
+          btn.disabled = false;
+          window.alert(`기기 삭제 실패: ${error.message}`);
+        }
+      });
+    });
+  };
+
   const renderFilteredDevices = () => {
     const grid = document.querySelector('[data-device-list-grid]');
     if (!grid) return;
@@ -298,6 +325,7 @@ export function mountDeviceListPage({ navigate } = {}) {
       ? filteredDevices.map(deviceCard).join('')
       : '<p class="device-list-empty">조건에 맞는 기기가 없습니다.</p>';
     bindDeviceFailureLinks();
+    bindDeleteButtons();
   };
 
   document.querySelectorAll('[data-filter-trigger]').forEach((button) => {
@@ -345,6 +373,7 @@ export function mountDeviceListPage({ navigate } = {}) {
   filterCleanup = () => document.removeEventListener('click', closeFilterMenus);
 
   bindDeviceFailureLinks();
+  bindDeleteButtons();
   refreshDeviceState();
 }
 

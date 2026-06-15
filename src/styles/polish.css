@@ -4926,31 +4926,58 @@ body,
   right: auto;
 }
 
-/* 기기 삭제 카드/버튼 */
-.device-delete-card {
-  display: flex;
-  align-items: center;
+/* 기기 삭제 = 쓰레기통 아이콘 (상세 상단바 우측 + 목록 카드 사진 위) */
+.device-detail-page .device-detail-topbar {
   justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
 }
-.device-delete-button {
-  padding: 12px 22px;
+.device-delete-icon {
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: 12px;
+  background: #fdeef0;
+  color: #e0556b;
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+.device-delete-icon:hover {
   background: #e0556b;
   color: #ffffff;
-  font-weight: 700;
-  font-size: 15px;
+}
+.device-delete-icon:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.device-list-card .device-list-picture {
+  position: relative;
+}
+.device-card-delete {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(224, 85, 107, 0.14);
+  color: #e0556b;
   cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.16s ease;
+  z-index: 3;
+  transition: background 0.16s ease, color 0.16s ease;
 }
-.device-delete-button:hover {
-  background: #c8455a;
+.device-card-delete:hover {
+  background: #e0556b;
+  color: #ffffff;
 }
-.device-delete-button:disabled {
-  opacity: 0.6;
+.device-card-delete:disabled {
+  opacity: 0.5;
   cursor: default;
 }
 
