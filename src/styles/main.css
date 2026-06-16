@@ -2222,7 +2222,8 @@ input[type="checkbox"] { width: auto; }
   grid-template-columns: minmax(440px, 1fr) minmax(440px, 1fr);
   grid-template-areas:
     "sentiment cause"
-    "recommend insight"
+    "appliance time"
+    "recommend recommend"
     "note note";
   gap: 16px 20px;
 }
@@ -2256,8 +2257,12 @@ input[type="checkbox"] { width: auto; }
   grid-area: recommend;
 }
 
-.gpt-insight-card {
-  grid-area: insight;
+.gpt-appliance-detail-card {
+  grid-area: appliance;
+}
+
+.gpt-time-card {
+  grid-area: time;
 }
 
 .gpt-sentiment-content {
@@ -3951,8 +3956,9 @@ input[type="checkbox"] { width: auto; }
     grid-template-areas:
       "sentiment"
       "cause"
+      "appliance"
+      "time"
       "recommend"
-      "insight"
       "note";
   }
 

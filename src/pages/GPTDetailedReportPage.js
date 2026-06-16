@@ -271,7 +271,7 @@ export async function renderGPTDetailedReportPage() {
 
       <div class="gpt-detail-grid">
         <section class="gpt-detail-card gpt-sentiment-card">
-          <h2>2. 소음 감정 분석</h2>
+          <h2>1. 소음 감정 분석</h2>
           <div class="gpt-sentiment-content">
             <div class="gpt-sentiment-donut" aria-label="부정 반응 ${data.negativeRatio} 퍼센트">
               <strong>${data.negativeRatio}%</strong>
@@ -285,14 +285,14 @@ export async function renderGPTDetailedReportPage() {
         </section>
 
         <section class="gpt-detail-card gpt-cause-card">
-          <h2>3. 주요 원인 기기 분석</h2>
+          <h2>2. 주요 원인 기기 분석</h2>
           <ol class="gpt-cause-list">
             ${causeHtml}
           </ol>
         </section>
 
         <section class="gpt-detail-card gpt-appliance-detail-card">
-          <h2>4. 가전별 소음·반응 상세</h2>
+          <h2>3. 가전별 소음·반응 상세</h2>
           <table class="gpt-appliance-table">
             <thead>
               <tr><th>가전</th><th class="num">만족</th><th class="num">불편</th><th class="num">평균 소음</th><th class="num">불편 비율</th></tr>
@@ -303,14 +303,14 @@ export async function renderGPTDetailedReportPage() {
         </section>
 
         <section class="gpt-detail-card gpt-time-card">
-          <h2>5. 불편 반응 시간대 분포</h2>
+          <h2>4. 불편 반응 시간대 분포</h2>
           <ul class="gpt-time-list">
             ${timeRowsHtml}
           </ul>
         </section>
 
         <section class="gpt-detail-card gpt-recommendation-card">
-          <h2>6. AI 분석 요약</h2>
+          <h2>5. AI 분석 요약</h2>
           ${analysisHtml}
         </section>
 
