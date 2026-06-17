@@ -239,8 +239,9 @@ export function createDeviceDetailModelScene(container, { modelType = 'washer' }
     controls.update();
     mixer?.update(delta);
     if (model) {
-      // Keep door-interactive appliances still so their doors are easy to click.
-      if (modelType !== 'refrigerator' && modelType !== 'dishwasher') {
+      // Keep the dishwasher still so its door is easy to click; everything else
+      // (incl. the refrigerator and hub) slowly turntables.
+      if (modelType !== 'dishwasher') {
         model.rotation.y += delta * 0.28;
       }
       if (modelType === 'washer') {

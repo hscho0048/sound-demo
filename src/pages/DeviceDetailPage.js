@@ -107,6 +107,25 @@ async function loadDeviceDetail(deviceId) {
   const label = (runtime?.sensitiveAppliances ?? []).find(
     (s) => s.userRegisteredDeviceId === deviceId
   )?.serviceLabel;
+
+  // LG AI 허브는 소음 측정 대상이 아닌 제어 허브다. serviceLabel이 없으므로
+  // 세탁기 모델로 떨어지지 않도록 deviceType으로 가려내 soundcare.glb(hub)를 쓴다.
+  const isHub = device?.deviceType === 'hub';
+  if (isHub) {
+    currentDeviceLabel = null;
+    return {
+      title: device?.name || 'LG AI 허브',
+      modelType: 'hub',
+      isHub: true,
+      modelLabel: device?.name || 'LG AI 허브',
+      serviceLabel: '제어 허브',
+      noiseLabel: '해당 없음',
+      roomName: ROOM_LABEL_KO[device?.roomName] ?? device?.roomName ?? '방 미지정',
+      events: ['허브가 정상적으로 연결되어 있습니다.'],
+      recommendation: 'LG AI 허브는 가전 제어와 소리 분석을 담당합니다. 항상 켜진 상태로 두세요.'
+    };
+  }
+
   currentDeviceLabel = label ?? null;
 
   const title = (label && SERVICE_LABEL_KO[label]) || device?.name || '기기';
