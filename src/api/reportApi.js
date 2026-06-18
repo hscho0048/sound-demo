@@ -90,7 +90,8 @@ export async function requestDetailedReport(reportPayload) {
     }));
     return {
       ...detailed,
-      text: detailed.text ?? detailed.reportText,
+      // 실호출이 reportId만 주고 본문이 비어 오는 경우에도 상세 화면이 비지 않도록 데모 본문으로 보강.
+      text: detailed.text ?? detailed.reportText ?? DEMO_REPORT_MARKDOWN,
       metadata: detailed.metadata ?? detailed.raw?.metadata
     };
   }
