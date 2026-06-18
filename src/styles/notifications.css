@@ -3,6 +3,10 @@
 
 .noti { position: absolute; top: 4px; right: 0; z-index: 60; }
 
+/* 전역 .hidden(main.css)이 나중 로드되는 이 파일의 규칙에 밀리지 않도록 명시 */
+.noti-panel.hidden { display: none !important; }
+.noti-badge.hidden { display: none !important; }
+
 .noti-bell {
   position: relative;
   width: 44px;
