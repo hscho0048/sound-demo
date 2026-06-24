@@ -79,11 +79,15 @@ async function loadReportData() {
     }
   }
 
-  applianceReports = [...byLabel.entries()].map(([label, count]) => ({
-    name: SERVICE_LABEL_KO[label] || label,
-    positive: `+${count.positive}`,
-    negative: `-${count.negative}`
-  }));
+  applianceReports = [...byLabel.entries()]
+    // '수동 입력'은 실제 가전이 아니라 표정 카드 대상이 아니다. 카드(=얼굴) 수를 줄여
+    // WebGL 컨텍스트 부담도 낮춘다. 반응 총계(긍정/부정)에는 그대로 반영된다.
+    .filter(([label]) => label !== 'manual')
+    .map(([label, count]) => ({
+      name: SERVICE_LABEL_KO[label] || label,
+      positive: `+${count.positive}`,
+      negative: `-${count.negative}`
+    }));
   reactionSummary = { positive, negative };
   sensitivityRanking = [...byLabel.entries()]
     .map(([label, count]) => ({ name: SERVICE_LABEL_KO[label] || label, negative: count.negative }))

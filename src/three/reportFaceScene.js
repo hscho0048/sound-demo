@@ -239,6 +239,14 @@ export function createReportFaceScene(container, { mood = 'positive' } = {}) {
       renderer.domElement.removeEventListener('pointerdown', handlePointerDown);
       if (animationFrame) window.cancelAnimationFrame(animationFrame);
       disposeObject(scene);
+      // renderer.dispose()만으로는 WebGL 컨텍스트가 즉시 해제되지 않아, 페이지를 오갈수록
+      // 컨텍스트가 쌓여 브라우저 한도(특히 모바일)를 넘으면 일부 얼굴이 깨진다.
+      // forceContextLoss()로 컨텍스트를 명시적으로 반납한다.
+      try {
+        renderer.forceContextLoss();
+      } catch (error) {
+        /* 일부 환경에서 미지원 — 무시 */
+      }
       renderer.dispose();
       container.classList.remove('is-loading');
       container.innerHTML = '';
