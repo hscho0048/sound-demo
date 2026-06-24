@@ -31,7 +31,7 @@ export function renderSettingsPage() {
           <h2>소음 임계값</h2>
           <p>상대 dB 감지의 기본 트리거 기준을 설정합니다. 너무 낮으면 추론 또는 오탐이 자주 발생할 수 있습니다.</p>
           <div class="settings-range-row">
-            <input id="noise-threshold-range" type="range" min="45" max="80" value="${defaultSettings.noiseThreshold}" />
+            <input id="noise-threshold-range" type="range" min="60" max="150" value="${defaultSettings.noiseThreshold}" />
             <output id="noise-threshold-value" for="noise-threshold-range">${defaultSettings.noiseThreshold} dB</output>
           </div>
         </section>
